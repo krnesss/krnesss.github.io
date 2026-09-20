@@ -547,3 +547,380 @@ code { font-family: var(--mono); font-size: .92em; background: rgba(255, 255, 25
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
 }
+
+/* ==========================================================================
+   三级侧边栏（分类 → 枪械 → 方案）
+   ========================================================================== */
+
+.nav-gun-item { list-style: none; }
+
+.nav-gun {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 0;
+  border-radius: 6px;
+  background: none;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.nav-gun:hover { background: var(--panel-2); }
+.nav-gun[data-open="false"] .nav-caret { transform: rotate(-90deg); }
+.nav-gun-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.nav-schemes {
+  list-style: none;
+  margin: 2px 0 8px;
+  padding: 0 0 0 14px;
+  border-left: 1px solid var(--line-soft);
+  margin-left: 16px;
+}
+.nav-gun[data-open="false"] + .nav-schemes { display: none; }
+
+.nav-scheme { display: flex; align-items: center; gap: 2px; }
+
+.nav-item {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1px;
+  padding: 5px 8px 5px 10px;
+  border-left: 2px solid transparent;
+  border-radius: 6px;
+  background: none;
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+.nav-item:hover { background: var(--panel-2); color: var(--text); }
+.nav-item.active {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
+.nav-item-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.nav-item-feat {
+  font-size: 11.5px;
+  font-weight: 400;
+  color: var(--text-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.nav-item.active .nav-item-feat { color: var(--accent-2); opacity: .75; }
+
+.nav-add {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel);
+  color: var(--text-mute);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color .14s, border-color .14s, background .14s;
+}
+.nav-add:hover { color: var(--accent-2); border-color: var(--accent); }
+.nav-add.on { color: var(--green); border-color: rgba(74, 222, 128, .5); background: rgba(74, 222, 128, .12); }
+
+/* ==========================================================================
+   详情页：简介、方案切换标签、价格
+   ========================================================================== */
+
+.detail-feat {
+  margin: 10px 0 0;
+  padding: 8px 12px;
+  border-left: 3px solid var(--accent);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  background: rgba(255, 138, 31, .07);
+  color: #ffdcb8;
+  font-size: 14px;
+  white-space: pre-line;
+}
+
+.scheme-tabs { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 14px; }
+
+.scheme-tab {
+  padding: 6px 16px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel-2);
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  transition: color .14s, border-color .14s, background .14s;
+}
+.scheme-tab:hover { color: var(--text); border-color: var(--accent); }
+.scheme-tab.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-2);
+  font-weight: 600;
+}
+
+.btn.on { border-color: rgba(74, 222, 128, .55); color: var(--green); background: rgba(74, 222, 128, .12); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.btn[disabled]:hover { border-color: var(--line); color: var(--text); background: var(--panel-2); }
+
+.btn-primary {
+  background: linear-gradient(180deg, var(--accent-2), var(--accent));
+  border-color: transparent;
+  color: #24160a;
+  font-weight: 700;
+}
+.btn-primary:hover { color: #24160a; border-color: transparent; background: linear-gradient(180deg, #ffc97a, var(--accent-2)); }
+.btn-primary[disabled] { background: var(--panel-2); color: var(--text-mute); }
+
+/* 价格：跟在改枪码下方单独展示 */
+.price-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+  padding: 14px 18px;
+  border: 1px solid rgba(255, 138, 31, .32);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(120deg, rgba(255, 138, 31, .13), rgba(255, 138, 31, .04));
+}
+.price-strip.empty { border-color: var(--line); background: var(--panel-2); }
+
+.price-label { display: flex; flex-direction: column; gap: 2px; }
+.price-label-main { font-size: 14px; font-weight: 700; color: var(--accent-2); letter-spacing: .06em; }
+.price-strip.empty .price-label-main { color: var(--text-dim); }
+.price-label-sub { font-size: 12px; color: var(--text-mute); }
+
+.price-value { display: flex; align-items: baseline; gap: 6px; }
+.price-number {
+  font-family: var(--mono);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: var(--accent-2);
+  letter-spacing: .02em;
+  font-variant-numeric: tabular-nums;
+}
+.price-strip.empty .price-number { font-size: 20px; color: var(--text-mute); }
+.price-unit { font-size: 14px; color: var(--text-dim); }
+
+.legend-note { margin-top: 12px; display: block; }
+.card-sub.legend-note { color: var(--text-mute); }
+
+/* ==========================================================================
+   对比栏（固定底部）
+   ========================================================================== */
+
+.compare-tray {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 50;
+  background: rgba(15, 20, 27, .95);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+  box-shadow: 0 -8px 26px rgba(0, 0, 0, .42);
+}
+.compare-tray[hidden] { display: none; }
+
+.tray-inner {
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 10px 22px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.tray-title { font-size: 13px; color: var(--text-dim); flex: none; }
+.tray-title b { color: var(--accent-2); font-size: 15px; }
+.tray-title small { color: var(--text-mute); }
+
+.tray-chips { flex: 1 1 320px; display: flex; align-items: center; gap: 7px; overflow-x: auto; padding: 2px 0; }
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  padding: 4px 6px 4px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel-2);
+  font-size: 12.5px;
+  color: var(--text);
+  white-space: nowrap;
+}
+.chip-x {
+  width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .08);
+  color: var(--text-dim);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+.chip-x:hover { background: rgba(248, 81, 73, .22); color: #ffb4ae; }
+
+.tray-actions { display: flex; gap: 8px; flex: none; }
+
+body.has-tray { padding-bottom: 74px; }
+
+/* ==========================================================================
+   对比表格
+   ========================================================================== */
+
+.compare-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 16px 20px;
+  background: linear-gradient(180deg, var(--panel-2), var(--panel));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.compare-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--panel);
+}
+
+.compare-table { border-collapse: collapse; width: 100%; min-width: 100%; }
+
+.compare-table th,
+.compare-table td { border-bottom: 1px solid var(--line-soft); }
+
+.cmp-rowhead {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  min-width: 104px;
+  padding: 9px 14px;
+  background: var(--panel);
+  text-align: left;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+.cmp-corner { color: var(--text-mute); font-size: 12px; letter-spacing: .08em; border-bottom-color: var(--line); }
+.cmp-down { margin-left: 5px; color: var(--cyan); }
+
+.cmp-col {
+  min-width: 156px;
+  padding: 12px 14px;
+  background: var(--panel-2);
+  border-bottom-color: var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+.cmp-col-top { display: flex; align-items: baseline; gap: 7px; }
+.cmp-gun { font-size: 15px; font-weight: 700; color: var(--text); }
+.cmp-scheme { font-size: 12.5px; color: var(--accent-2); }
+.cmp-feat { margin-top: 5px; font-size: 12px; color: var(--text-mute); line-height: 1.5; }
+.cmp-remove {
+  margin-left: auto;
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .07);
+  color: var(--text-mute);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+}
+.cmp-remove:hover { background: rgba(248, 81, 73, .22); color: #ffb4ae; }
+.cmp-open {
+  margin-top: 8px;
+  padding: 3px 10px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: none;
+  color: var(--text-dim);
+  font-family: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.cmp-open:hover { color: var(--accent-2); border-color: var(--accent); }
+
+.cmp-cell { padding: 9px 14px; min-width: 156px; vertical-align: middle; }
+.cmp-cell.cmp-empty { color: var(--text-mute); }
+.cmp-val {
+  display: block;
+  font-family: var(--mono);
+  font-size: 14px;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
+.cmp-val small { margin-left: 4px; font-size: 11.5px; color: var(--text-mute); }
+
+.cmp-bar {
+  margin-top: 6px;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, .06);
+  overflow: hidden;
+}
+.cmp-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #b45a00, var(--accent) 70%, var(--accent-2));
+}
+
+.cmp-cell.best { background: rgba(74, 222, 128, .08); }
+.cmp-cell.best .cmp-val { color: var(--green); font-weight: 700; }
+.cmp-cell.best .cmp-bar i { background: linear-gradient(90deg, #15803d, var(--green)); }
+
+.cmp-tag {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: rgba(74, 222, 128, .16);
+  color: var(--green);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.cmp-price-row .cmp-rowhead { color: var(--accent-2); font-weight: 700; }
+.cmp-price-row .cmp-cell { padding-top: 12px; padding-bottom: 12px; }
+.cmp-price-number { font-size: 17px; font-weight: 700; }
+
+@media (max-width: 900px) {
+  .tray-inner { padding: 9px 14px; gap: 10px; }
+  .tray-chips { flex-basis: 100%; order: 3; }
+  .tray-actions { margin-left: auto; }
+  .cmp-col, .cmp-cell { min-width: 128px; }
+  .price-number { font-size: 26px; }
+  .price-strip { padding: 12px 14px; }
+  body.has-tray { padding-bottom: 118px; }
+}
+

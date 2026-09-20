@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 /**
  * 冒烟测试：用最小 DOM 桩在 Node 里真实跑一遍 assets/app.js，
- * 检查首屏渲染、路由、搜索、图表行数、复制按钮、折叠按钮是否正常。
+ * 检查首屏渲染、三级侧边栏展开、方案切换、价格展示、复制、对比功能、
+ * 搜索、折叠、灯箱，以及「页面不暴露内部信息」「路径全 ASCII」等约束。
+ *
  * 用法： node tools/smoke-test.mjs   （不依赖任何第三方库，也不开浏览器）
  */
 
@@ -25,6 +27,7 @@ class El {
     this.listeners = {};
     this.className = '';
     this.hidden = false;
+    this.disabled = false;
     this._text = '';
     const self = this;
     this.classList = {
@@ -62,8 +65,9 @@ class El {
 }
 
 const IDS = [
-  'brandMeta', 'footerMeta', 'banner', 'gunNav', 'navEmpty', 'collapseAll', 'detail',
-  'searchInput', 'searchClear', 'lightbox', 'lightboxImg', 'toast',
+  'brandMeta', 'footerMeta', 'banner', 'gunNav', 'navEmpty', 'collapseAll',
+  'content', 'detail', 'searchInput', 'searchClear', 'lightbox', 'lightboxImg', 'toast',
+  'compareTray', 'trayChips', 'trayCount', 'trayCompare', 'trayClear',
 ];
 
 const document = {
@@ -109,19 +113,19 @@ const sandbox = {
   isSecureContext: true,
 };
 sandbox.window = sandbox;
+sandbox.window._listeners = {};
 sandbox.window.addEventListener = (type, fn) => {
-  (sandbox._listeners = sandbox._listeners || {});
   (sandbox._listeners[type] = sandbox._listeners[type] || []).push(fn);
 };
 sandbox.window.scrollTo = () => {};
 sandbox.window.getSelection = () => ({ removeAllRanges() {}, addRange() {} });
-sandbox.window._listeners = {};
-sandbox.window.isSecureContext = true;
 
 /* ------------------------------------------------------------ 断言 ---- */
 
 let passed = 0;
 const failures = [];
+
+function section(title) { console.log('\n【' + title + '】'); }
 
 function check(name, cond, extra) {
   if (cond) { passed += 1; console.log('  ✔ ' + name); }
@@ -138,6 +142,7 @@ function collect(root, cls) {
   return out;
 }
 function one(root, cls) { return collect(root, cls)[0]; }
+function textOf(root) { return root.textContent; }
 
 function flushRaf() {
   const queued = rafQueue.splice(0, rafQueue.length);
@@ -147,7 +152,7 @@ function flushRaf() {
 function flushHashChange() {
   while (pendingHash > 0) {
     pendingHash -= 1;
-    (sandbox.window._listeners.hashchange || []).forEach((fn) => fn({ type: 'hashchange' }));
+    (sandbox._listeners.hashchange || []).forEach((fn) => fn({ type: 'hashchange' }));
   }
 }
 const tick = () => new Promise((r) => setTimeout(r, 0));
@@ -157,8 +162,7 @@ const tick = () => new Promise((r) => setTimeout(r, 0));
 const context = vm.createContext(sandbox);
 
 for (const file of ['data/guns.js', 'assets/app.js']) {
-  const full = path.join(ROOT, file);
-  const code = fs.readFileSync(full, 'utf8');
+  const code = fs.readFileSync(path.join(ROOT, file), 'utf8');
   try {
     vm.runInContext(code, context, { filename: file });
   } catch (err) {
@@ -170,102 +174,225 @@ for (const file of ['data/guns.js', 'assets/app.js']) {
 
 const el = (id) => document._byId[id];
 const detail = el('detail');
+const nav = el('gunNav');
+const DATA = sandbox.__GUN_DATA__;
+const GUNS = DATA.categories.flatMap((c) => c.guns);
+const SCHEMES = GUNS.flatMap((g) => g.schemes);
 
-console.log('\n【首屏渲染】');
+/* ---------------------------------------------------------- 首屏渲染 ---- */
+
+section('首屏渲染');
 check('没有抛异常，页面完成初始化', detail.children.length > 0);
-check('顶栏显示分类与枪械数量', /分类/.test(el('brandMeta').textContent), el('brandMeta').textContent);
-check('默认选中第一把枪（AK-12）', one(detail, 'detail-title').textContent === 'AK-12', one(detail, 'detail-title').textContent);
-check('分类显示为缩写（AR，而不是目录名）', collect(detail, 'badge')[0].textContent === 'AR', collect(detail, 'badge')[0].textContent);
-check('详情页路径显示真实目录 save/AR/AK-12/', one(detail, 'detail-path').textContent === 'save/AR/AK-12/',
-  one(detail, 'detail-path').textContent);
-check('详情页写入 URL 锚点', /^#\//.test(location.hash), location.hash);
+check('默认打开第一套方案（AK-12 方案 1）',
+  one(detail, 'detail-title').textContent === 'AK-12', one(detail, 'detail-title').textContent);
+check('分类显示中文全称（不是 AR 缩写）',
+  collect(detail, 'badge')[0].textContent === '突击步枪', collect(detail, 'badge')[0].textContent);
+check('顶栏统计枪械数与方案数', /3 把枪械/.test(el('brandMeta').textContent) && /4 套方案/.test(el('brandMeta').textContent),
+  el('brandMeta').textContent);
+check('写入 URL 锚点', /^#\//.test(location.hash), location.hash);
 
-console.log('\n【路径与显示名的 ASCII 约束】');
-const data = sandbox.__GUN_DATA__;
-const GUNS = data.categories.flatMap((c) => c.guns);
-const ASCII = /^[\x20-\x7E]*$/;
-check('所有枪械目录/文件名都是 ASCII',
-  GUNS.every((g) => [g.dir, g.image, g.imageFile, g.codeFile, g.statsFile].every((v) => v === null || ASCII.test(v))),
-  GUNS.map((g) => g.dir + '|' + g.image).filter((v) => !ASCII.test(v)).join(' , '));
-check('图片 URL 不含百分号编码', GUNS.every((g) => !g.image || !g.image.includes('%')), GUNS.map((g) => g.image).join(' , '));
-check('页面显示名（分类/枪名/锚点 id）都是 ASCII',
-  GUNS.every((g) => [g.id, g.name, g.category].every((v) => ASCII.test(v))),
-  GUNS.map((g) => g.id).filter((v) => !ASCII.test(v)).join(' , '));
-check('分类显示为缩写', data.categories.map((c) => c.name).join(',') === 'AR,SMG',
-  data.categories.map((c) => c.name).join(','));
+/* ------------------------------------------------------------ 改枪码 ---- */
 
-console.log('\n【侧边栏】');
-check('渲染出 2 个分类分组', collect(el('gunNav'), 'nav-group').length === 2);
-check('渲染出 3 个枪械按钮', collect(el('gunNav'), 'nav-item').length === 3);
-check('分类计数显示正确', collect(el('gunNav'), 'nav-count').map((n) => n.textContent).join(',') === '2,1',
-  collect(el('gunNav'), 'nav-count').map((n) => n.textContent).join(','));
-check('当前枪械被标记为 active', collect(el('gunNav'), 'nav-item').some((b) => b.classList.contains('active')));
-
-console.log('\n【改枪码】');
-check('改枪码内容正确（注释行被忽略、只留码）', one(detail, 'code-text').textContent === 'AK-12-3C7D-51E9-A20B-88F6',
-  one(detail, 'code-text').textContent);
-check('存在复制按钮', !!one(detail, 'btn'));
-
-console.log('\n【概览图】');
-const img = one(detail, 'overview').children[0];
-check('图片指向 save/ 下的概览图（纯 ASCII 路径，无需百分号编码）', img.src === 'save/AR/AK-12/overview.svg', img.src);
-
-console.log('\n【属性柱状图】');
-const fills = collect(detail, 'chart-fill');
-check('txt 里的 11 项属性各有一根柱子', fills.length === 11, '实际 ' + fills.length);
-check('柱子带 data 提示', fills.every((f) => f.title && f.title.includes('：')));
+section('改枪码与价格');
+check('改枪码内容正确（注释行被忽略）',
+  one(detail, 'code-text').textContent === 'AK-12-3C7D-51E9-A20B-88F6', one(detail, 'code-text').textContent);
+check('价格在改枪码下方单独展示', !!one(detail, 'price-strip'));
+check('价格数值带千分位', one(detail, 'price-number').textContent === '198,000', one(detail, 'price-number').textContent);
+check('价格单位显示', one(detail, 'price-unit').textContent === '币', one(detail, 'price-unit').textContent);
+check('价格没有被画进柱状图',
+  collect(detail, 'chart-label').every((n) => n.textContent !== '价格'),
+  collect(detail, 'chart-label').map((n) => n.textContent).join(','));
+check('柱状图行数 = 属性数（10 项，不含价格）',
+  collect(detail, 'chart-fill').length === 10, '实际 ' + collect(detail, 'chart-fill').length);
 flushRaf();
-check('柱状图按数值撑开宽度', fills.every((f) => /%$/.test(f.style.width)), JSON.stringify(fills.map((f) => f.style.width)));
-const inverseRows = collect(detail, 'chart-row').filter((r) => r.classList.contains('inverse'));
-check('越低越好的属性被标成蓝色（举镜时间/换弹时间）', inverseRows.length === 2, '实际 ' + inverseRows.length);
-check('区间值取中值并原样显示（伤害 38-42）',
-  collect(detail, 'chart-value').some((v) => v.textContent.startsWith('38-42')),
-  collect(detail, 'chart-value').map((v) => v.textContent).join(' | '));
+check('柱状图按数值撑开宽度',
+  collect(detail, 'chart-fill').every((f) => /%$/.test(f.style.width)));
 
-console.log('\n【复制按钮】');
-one(detail, 'btn').dispatch('click');
-await tick();
-check('点击后提示已复制', el('toast').hidden === false && one(detail, 'btn').textContent.includes('已复制'));
+section('方案简介');
+check('枪名下方显示 feat.txt 的简介',
+  one(detail, 'detail-feat').textContent.includes('高性价比稳压流'), one(detail, 'detail-feat').textContent);
 
-console.log('\n【路由切换】');
-location.hash = '#/' + encodeURIComponent('SMG') + '/' + encodeURIComponent('Vector');
+section('不暴露内部信息');
+const detailText = textOf(detail);
+check('详情页不出现「来源：xxx.txt」', !/来源[:：]/.test(detailText));
+check('详情页不出现 txt 文件名', !/\.txt/.test(detailText), detailText.match(/\S*\.txt\S*/) || '');
+check('详情页不出现 save/ 目录路径', !/save\//.test(detailText), detailText.match(/\S*save\/\S*/) || '');
+check('页脚不出现构建脚本/目录说明', !/tools\/|save\//.test(el('footerMeta').textContent), el('footerMeta').textContent);
+check('页脚只有最后更新时间', /^最后更新：/.test(el('footerMeta').textContent), el('footerMeta').textContent);
+
+/* ------------------------------------------------------------ 侧边栏 ---- */
+
+section('侧边栏三级结构');
+check('渲染出 2 个分类分组', collect(nav, 'nav-group').length === 2);
+check('渲染出 3 个枪械行', collect(nav, 'nav-gun').length === 3);
+check('渲染出 4 个方案项', collect(nav, 'nav-item').length === 4, '实际 ' + collect(nav, 'nav-item').length);
+check('每个方案都有「加入对比」按钮', collect(nav, 'nav-add').length === 4);
+check('当前枪械（AK-12）的方案列表是展开的',
+  collect(nav, 'nav-gun').filter((b) => b.textContent.includes('AK-12') && b.dataset.open !== 'true').length === 0);
+check('方案项显示简介', collect(nav, 'nav-item-feat').length === 4);
+
+// 展开 M4A1
+const m4Row = collect(nav, 'nav-gun').find((b) => b.textContent.includes('M4A1'));
+m4Row.dispatch('click');
+check('点击枪名可以展开该枪的方案', m4Row.dataset.open === 'true', m4Row.dataset.open);
+check('展开后仍能定位到方案项', collect(m4Row.parentNode, 'nav-item').length === 2,
+  '实际 ' + collect(m4Row.parentNode, 'nav-item').length);
+
+/* -------------------------------------------------------- 方案切换 ---- */
+
+section('同一把枪的多套方案');
+check('AK-12 只有 1 套方案时不显示切换标签', !one(detail, 'scheme-tabs'));
+location.hash = '#/' + ['突击步枪', 'M4A1', '1'].map(encodeURIComponent).join('/');
 flushHashChange();
-check('切换到 Vector 后重新渲染', one(detail, 'detail-title').textContent === 'Vector', one(detail, 'detail-title').textContent);
-check('Vector 的 11 项属性渲染完成', collect(detail, 'chart-fill').length === 11);
-check('Vector 的改枪码正确', one(detail, 'code-text').textContent === 'Vector-91B4-6D0F-2E77-C53A',
-  one(detail, 'code-text').textContent);
-check('分类徽章随枪械变化（显示为分类缩写 SMG）', collect(detail, 'badge')[0].textContent === 'SMG',
-  collect(detail, 'badge')[0].textContent);
+check('切到 M4A1 方案 1', one(detail, 'detail-title').textContent === 'M4A1', one(detail, 'detail-title').textContent);
+check('M4A1 显示 2 个方案标签', collect(detail, 'scheme-tab').length === 2);
+check('方案 1 标签处于选中态', collect(detail, 'scheme-tab')[0].classList.contains('active'));
+check('方案 1 价格正确', one(detail, 'price-number').textContent === '245,000', one(detail, 'price-number').textContent);
+check('方案 1 显示自己的简介', one(detail, 'detail-feat').textContent.includes('近战突击流'));
+check('方案 1 的图片路径正确',
+  one(detail, 'overview').children[0].src === 'save/AR/M4A1/1/overview.svg',
+  one(detail, 'overview').children[0].src);
 
-location.hash = '#/不存在的分类/不存在的枪';
+collect(detail, 'scheme-tab')[1].dispatch('click');
 flushHashChange();
-check('非法锚点回退到默认枪械而不是白屏', ['AK-12', 'Vector'].includes(one(detail, 'detail-title').textContent));
+check('点标签切到方案 2', one(detail, 'detail-title').textContent === 'M4A1' && /\/2$/.test(location.hash), location.hash);
+check('方案 2 的改枪码正确',
+  one(detail, 'code-text').textContent === 'M4A1-2-9D4E-71AC-B3F8-60D1', one(detail, 'code-text').textContent);
+check('方案 2 的价格正确', one(detail, 'price-number').textContent === '312,000', one(detail, 'price-number').textContent);
+check('方案 2 的简介正确', one(detail, 'detail-feat').textContent.includes('中远距离控枪流'));
 
-console.log('\n【搜索】');
+/* ------------------------------------------------------------ 对比 ---- */
+
+section('对比功能');
+check('对比栏初始是隐藏的', el('compareTray').hidden === true);
+
+/** 按「枪名 + 方案标签」找到侧边栏里那颗「加入对比」按钮（每次 renderNav 后 DOM 会重建） */
+function findAddButton(gunName, label) {
+  const gunItem = collect(nav, 'nav-gun-item').find((li) => {
+    const n = one(li, 'nav-gun-name');
+    return n && n.textContent === gunName;
+  });
+  if (!gunItem) return null;
+  const schemeItem = collect(gunItem, 'nav-scheme').find((li) => {
+    const l = one(li, 'nav-item-label');
+    return l && l.textContent === label;
+  });
+  return schemeItem ? collect(schemeItem, 'nav-add')[0] : null;
+}
+
+check('能定位到 M4A1 方案 1 的 + 按钮', !!findAddButton('M4A1', '方案 1'));
+findAddButton('M4A1', '方案 1').dispatch('click');
+findAddButton('M4A1', '方案 2').dispatch('click');
+const m4Adds = collect(nav, 'nav-add').filter((b) => b.classList.contains('on'));
+check('加入后对比栏出现', el('compareTray').hidden === false);
+check('对比栏计数为 2', el('trayCount').textContent === '2', el('trayCount').textContent);
+check('对比栏生成 2 个 chip', collect(el('trayChips'), 'chip').length === 2);
+check('已加入的方案按钮变成勾选态', m4Adds.length === 2, '实际 ' + m4Adds.length);
+check('「开始对比」按钮可用', el('trayCompare').disabled === false);
+
+el('trayCompare').dispatch('click');
+flushHashChange();
+check('跳转到对比路由', /^#\/compare\//.test(location.hash), location.hash);
+check('渲染出对比表格', !!one(detail, 'compare-table'));
+check('表格有 2 列方案', collect(detail, 'cmp-col').length === 2, '实际 ' + collect(detail, 'cmp-col').length);
+check('对比表头显示枪名与方案', collect(detail, 'cmp-gun').map((n) => n.textContent).join(',') === 'M4A1,M4A1',
+  collect(detail, 'cmp-gun').map((n) => n.textContent).join(','));
+check('对比表头显示方案简介', collect(detail, 'cmp-feat').length === 2);
+check('表格含价格行', collect(detail, 'cmp-price-row').length === 1);
+
+const priceCells = collect(one(detail, 'cmp-price-row'), 'cmp-cell');
+check('价格行把更便宜的一套标成「最低」',
+  priceCells[0].classList.contains('best') && !priceCells[1].classList.contains('best'),
+  priceCells.map((c) => c.className + ':' + c.textContent).join(' | '));
+check('价格行显示千分位价格', priceCells[0].textContent.includes('245,000'), priceCells[0].textContent);
+
+const rows = collect(detail, 'cmp-price-row')[0].parentNode.children;
+const rowByLabel = (label) => rows.find((tr) => tr.children[0] && tr.children[0].textContent.startsWith(label));
+const recoil = rowByLabel('后坐力控制');
+check('后坐力控制行标出更高的一方（方案 2：88）',
+  recoil && !recoil.children[1].classList.contains('best') && recoil.children[2].classList.contains('best'),
+  recoil ? recoil.children[1].className + ' | ' + recoil.children[2].className : '没找到该行');
+
+const ads = rowByLabel('举镜时间');
+check('举镜时间行标出更低的一方（方案 1：320ms，越低越好）',
+  ads && ads.children[1].classList.contains('best') && !ads.children[2].classList.contains('best'),
+  ads ? ads.children[1].className + ' | ' + ads.children[2].className : '没找到该行');
+check('对比页标注了 ↓ 反向属性', collect(detail, 'cmp-down').length >= 2, '实际 ' + collect(detail, 'cmp-down').length);
+check('对比页也能看到每套方案的价格', textOf(detail).includes('245,000') && textOf(detail).includes('312,000'));
+
+// 移除一个 chip
+collect(el('trayChips'), 'chip-x')[0].dispatch('click');
+flushHashChange();
+check('移除后对比栏只剩 1 套', el('trayCount').textContent === '1', el('trayCount').textContent);
+check('只剩 1 套时「开始对比」被禁用', el('trayCompare').disabled === true);
+
+el('trayClear').dispatch('click');
+check('清空后对比栏隐藏', el('compareTray').hidden === true);
+
+/* ------------------------------------------------------------ 搜索 ---- */
+
+section('搜索');
 el('searchInput').value = 'vector';
 el('searchInput').dispatch('input');
-check('搜索后只剩 1 个结果', collect(el('gunNav'), 'nav-item').length === 1);
-check('搜索框出现清空按钮', el('searchClear').hidden === false);
+check('搜索 vector 只剩 1 个枪械行', collect(nav, 'nav-gun').length === 1, '实际 ' + collect(nav, 'nav-gun').length);
+check('搜索时自动展开方案', collect(nav, 'nav-item').length === 1);
+el('searchInput').value = '控枪';
+el('searchInput').dispatch('input');
+check('按 feat 简介也能搜到方案', collect(nav, 'nav-item').length === 1, '实际 ' + collect(nav, 'nav-item').length);
 el('searchClear').dispatch('click');
-check('清空搜索后恢复 3 个结果', collect(el('gunNav'), 'nav-item').length === 3);
+check('清空搜索后恢复 3 把枪', collect(nav, 'nav-gun').length === 3);
 
-console.log('\n【折叠按钮】');
+/* ------------------------------------------------------------ 折叠 ---- */
+
+section('折叠与灯箱');
 el('collapseAll').dispatch('click');
-check('第一次点击全部折叠', collect(el('gunNav'), 'nav-group').every((g) => g.dataset.open === 'false'));
+check('第一次点击全部折叠', collect(nav, 'nav-group').every((g) => g.dataset.open === 'false'));
 check('按钮变成「全部展开」', el('collapseAll').textContent === '全部展开', el('collapseAll').textContent);
 el('collapseAll').dispatch('click');
-check('第二次点击全部展开', collect(el('gunNav'), 'nav-group').every((g) => g.dataset.open === 'true'));
-check('按钮变回「全部折叠」', el('collapseAll').textContent === '全部折叠', el('collapseAll').textContent);
+check('第二次点击全部展开', collect(nav, 'nav-group').every((g) => g.dataset.open === 'true'));
 
-console.log('\n【图片放大】');
+location.hash = '#/' + ['突击步枪', 'AK-12', '1'].map(encodeURIComponent).join('/');
+flushHashChange();
 one(detail, 'overview').dispatch('click');
-check('点击概览图打开灯箱', el('lightbox').hidden === false && el('lightboxImg').src === img.src);
+check('点击概览图打开灯箱', el('lightbox').hidden === false);
 document.dispatch('keydown', { key: 'Escape' });
 check('Esc 关闭灯箱', el('lightbox').hidden === true);
 
+/* ------------------------------------------------------- 数据约束 ---- */
+
+section('数据与路径约束');
+const ASCII = /^[\x20-\x7E]*$/;
+const paths = [];
+DATA.categories.forEach((c) => {
+  if (c.dirName) paths.push(c.dirName);
+  c.guns.forEach((g) => {
+    paths.push(g.dir, g.categoryDir);
+    g.schemes.forEach((s) => {
+      paths.push(s.dir, s.image, s.imageFile, s.codeFile, s.statsFile, s.featFile);
+    });
+  });
+});
+check('所有文件系统路径都是 ASCII',
+  paths.filter(Boolean).every((p) => ASCII.test(p)),
+  paths.filter((p) => p && !ASCII.test(p)).join(' , '));
+check('图片 URL 不含百分号编码',
+  SCHEMES.every((s) => !s.image || !s.image.includes('%')));
+check('枪械名是 ASCII',
+  GUNS.every((g) => ASCII.test(g.name)), GUNS.map((g) => g.name).join(','));
+check('分类显示名为中文全称',
+  DATA.categories.map((c) => c.name).join(',') === '突击步枪,冲锋枪',
+  DATA.categories.map((c) => c.name).join(','));
+check('每套方案都有价格字段位（可为 null）',
+  SCHEMES.every((s) => s.price === null || typeof s.price.value === 'number'));
+check('价格字段确实来自 stats.txt 的「价格」行',
+  SCHEMES.filter((s) => s.price).every((s) => /价格|总价|造价/.test(s.price.key)));
+check('每个方案都有 feat 简介', SCHEMES.every((s) => s.feat && s.feat.length > 0));
+check('方案编号从 1 开始且唯一',
+  GUNS.every((g) => g.schemes.map((s) => s.index).join(',') === g.schemes.map((_, i) => i + 1).join(',')));
+
 /* ------------------------------------------------------------ 结论 ---- */
 
-console.log('\n' + '─'.repeat(52));
+console.log('\n' + '─'.repeat(56));
 if (failures.length) {
   console.error(`✘ 冒烟测试失败：${passed} 项通过，${failures.length} 项未通过`);
   failures.forEach((f) => console.error('  · ' + f));

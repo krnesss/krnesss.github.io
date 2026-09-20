@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 380" width="800" height="380" role="img" aria-label="Vector 方案概览示例图">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 380" width="800" height="380" role="img" aria-label="M4A1 方案概览示例图">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0" stop-color="#0d1219"/>
@@ -8,8 +8,8 @@
       <path d="M26 0H0V26" fill="none" stroke="#1b2431" stroke-width="1"/>
     </pattern>
     <linearGradient id="gun" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#7dd3fc"/>
-      <stop offset="1" stop-color="#0369a1"/>
+      <stop offset="0" stop-color="#ffb457"/>
+      <stop offset="1" stop-color="#c26305"/>
     </linearGradient>
   </defs>
 
@@ -18,10 +18,10 @@
   <rect x="0.5" y="0.5" width="799" height="379" fill="none" stroke="#263041"/>
 
   <text x="28" y="40" fill="#6b7a8d" font-family="monospace" font-size="13" letter-spacing="2">SCHEME OVERVIEW / 示例图</text>
-  <text x="28" y="66" fill="#e7edf5" font-family="sans-serif" font-size="24" font-weight="700">Vector</text>
+  <text x="28" y="66" fill="#e7edf5" font-family="sans-serif" font-size="24" font-weight="700">M4A1</text>
 
   <!-- 枪械轮廓示意 -->
-  <g fill="url(#gun)" stroke="#bae6fd" stroke-width="1">
+  <g fill="url(#gun)" stroke="#ffd9a8" stroke-width="1">
     <!-- 枪托 -->
     <path d="M96 176h74l14 10v18h-30l-10 16H96z"/>
     <!-- 机匣 -->
@@ -43,10 +43,10 @@
   </g>
 
   <!-- 准星刻度 -->
-  <g stroke="#38bdf8" stroke-width="2" opacity=".85">
+  <g stroke="#ff8a1f" stroke-width="2" opacity=".85">
     <path d="M600 108h60M630 90v36M20 320h760"/>
   </g>
 
   <text x="28" y="352" fill="#9aa8bb" font-family="sans-serif" font-size="14">示例占位图 · 把本文件换成你导出的改枪方案截图即可，文件名随意</text>
-  <text x="772" y="352" fill="#4a5666" font-family="monospace" font-size="13" text-anchor="end">save/SMG/Vector/</text>
+  <text x="772" y="352" fill="#4a5666" font-family="monospace" font-size="13" text-anchor="end">save/AR/M4A1/1/</text>
 </svg>
