@@ -8,7 +8,10 @@
     "build": "node tools/build-data.mjs",
     "serve": "node tools/serve.mjs",
     "dev": "node tools/build-data.mjs && node tools/serve.mjs",
-    "test": "node tools/build-data.mjs && node tools/smoke-test.mjs"
+    "test": "node tools/build-data.mjs && node tools/smoke-test.mjs",
+    "inspect": "node tools/inspect-data.mjs",
+    "update": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/update-repo.ps1",
+    "fix-encoding": "powershell -NoProfile -ExecutionPolicy Bypass -File tools/fix-encoding.ps1"
   },
   "engines": {
     "node": ">=18"

@@ -20,7 +20,10 @@
 │   ├─ build-data.mjs         扫描 save/ 生成 data/guns.js、data/guns.json
 │   ├─ inspect-data.mjs       把生成的数据按「分类/枪械/方案」打印出来，方便核对
 │   ├─ serve.mjs              本地预览用的小型静态服务器
-│   └─ smoke-test.mjs         自检脚本：在 Node 里跑一遍页面逻辑，不需要浏览器
+│   ├─ smoke-test.mjs         自检脚本：在 Node 里跑一遍页面逻辑，不需要浏览器
+│   ├─ update-repo.ps1        ★ 一键更新：构建 → 自检 → 提交 → 推送
+│   └─ fix-encoding.ps1       确保 update-repo.ps1 存成「UTF-8 带 BOM」（见第七节）
+├─ update-repo.cmd            双击即可运行的入口（调用上面的 ps1）
 ├─ data/
 │   ├─ guns.js                自动生成，页面真正读取的数据
 │   └─ guns.json              自动生成，同样的内容（给别的工具用）
@@ -233,3 +236,71 @@ git push -u origin main
   想让它直接中断构建，把里面的 `console.warn` 换成 `throw` 即可。
 
 改完 `tools/build-data.mjs` 后记得重新运行 `node tools/build-data.mjs`。
+
+## 七、一键更新脚本（构建 → 自检 → 提交 → 推送）
+
+改完 `save/` 之后不用再手敲 git 命令，跑一个脚本就行：
+
+```powershell
+# 方式 1：直接双击仓库根目录的 update-repo.cmd（最省事）
+# 方式 2：终端 / npm
+npm run update
+# 方式 3：直接调 ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File tools\update-repo.ps1
+```
+
+脚本按顺序做 7 件事，**任何一步失败都会立刻停下并说明原因**（不会留下半途状态）：
+
+| 步骤 | 做什么 |
+| --- | --- |
+| 1 检查环境 | git / node 是否可用；有没有卡在半途的 rebase、merge、cherry-pick |
+| 2 准备仓库 | 没有 `.git` 就 `git init`；没有 `origin` 就自动添加远程地址 |
+| 3 构建数据 | `node tools/build-data.mjs`（扫描 `save/` 生成 `data/`） |
+| 4 自检 | `node tools/smoke-test.mjs`（76 项页面与数据断言） |
+| 5 预览改动 | 列出这次会提交哪些文件，并提醒含非 ASCII 的路径 |
+| 6 提交 | `git add -A` + `git commit`（提交信息不写就自动生成） |
+| 7 推送 | `git push`，首次自动带上 `-u origin <分支>` |
+
+### 常用参数
+
+| 参数 | 作用 |
+| --- | --- |
+| `-Message "新增 M4A1 方案 3"` | 自定义提交信息（不写会按改动内容自动生成，例如「更新改枪数据：M4A1、AK-12（3 个文件）」） |
+| `-DryRun` | 只预览：构建和自检照跑，但不提交、不推送，也不改仓库配置 |
+| `-SkipTest` | 跳过自检（想快一点时用，不推荐） |
+| `-SkipBuild` | 跳过数据构建（确认 `data/` 已是最新时用） |
+| `-Pull` | 提交前先 `git pull --rebase`，适合在多台电脑上改同一份数据 |
+| `-NoPush` | 只提交到本地，不推送 |
+| `-Remote <地址>` | 首次运行时使用的远程地址，默认 `https://github.com/krnesss/krnesss.github.io.git` |
+| `-Branch <名字>` | 分支名，默认 `main` |
+
+例子：
+
+```powershell
+npm run update -- -DryRun
+npm run update -- -Message "补充 Vector 方案 2" -SkipTest
+update-repo.cmd -Pull
+```
+
+### 推送失败怎么办
+
+脚本会把改动留在本地并给出原因，照着排查后重新运行即可：
+
+1. **GitHub 上还没建仓库** → 去 <https://github.com/new> 建一个公开仓库，名字填 `krnesss.github.io`；
+2. **没登录 / 没权限** → 在浏览器登录 GitHub，再用 Git Credential Manager 认证一次；
+3. **报 non-fast-forward**（远端有新提交）→ 加上 `-Pull` 再运行；
+4. **网络问题** → 打开代理 / VPN 后重试。
+
+### 为什么有个 fix-encoding.ps1
+
+Windows PowerShell 5.1 读取**没有 BOM** 的 `.ps1` 时会按系统 ANSI 编码解析，
+中文会变成乱码并直接报语法错误。所以 `update-repo.ps1` 必须保存成「UTF-8 带 BOM」。
+
+`update-repo.cmd` 每次启动前会静默跑一次 `tools/fix-encoding.ps1` 自动补上 BOM（幂等，可以放心重复运行）。
+如果你用别的编辑器改过 `update-repo.ps1` 又遇到乱码报错，手动跑一次即可：
+
+```powershell
+npm run fix-encoding
+```
+
+> 用 VS Code 改这个脚本时，右下角编码选 **UTF-8 with BOM**；用记事本「另存为」时编码选 **UTF-8（带 BOM）**。
