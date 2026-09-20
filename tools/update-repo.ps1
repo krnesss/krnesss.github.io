@@ -384,10 +384,26 @@ if ($ghCmd) {
 
     if ($ghLoggedIn) {
         if ($DryRun) {
-            Write-Info '会执行 gh auth setup-git（让 git 复用 GitHub CLI 的登录）'
+            Write-Info '会配置 git 使用 GitHub CLI 的登录凭据'
         } else {
+            # 先走官方命令（写全局配置）；失败（比如全局配置被权限拦住）时，
+            # 退而把凭据助手写进本仓库的局部配置 .git/config，一样生效。
+            $prev2 = $ErrorActionPreference
+            $ErrorActionPreference = 'Continue'
             & gh auth setup-git *> $null
-            Write-Ok '已让 git 复用 GitHub CLI 的登录（gh auth setup-git）'
+            $setupOk = ($LASTEXITCODE -eq 0)
+            $ErrorActionPreference = $prev2
+
+            if (-not $setupOk) {
+                Invoke-Git @('config', '--local', 'credential.https://github.com.helper', '!gh auth git-credential') | Out-Null
+            }
+
+            $helperNow = (@(Invoke-Git @('config', '--get', 'credential.https://github.com.helper') -AllowFailure) -join '')
+            if ($helperNow -match 'gh auth git-credential') {
+                Write-Ok '已让 git 复用 GitHub CLI 的登录凭据'
+            } else {
+                Write-Note '未能自动配置 gh 凭据；若推送失败请手动执行：gh auth setup-git'
+            }
         }
     } else {
         Write-Note '检测到 gh 未登录；若推送失败，先执行 gh auth login --with-token 再重试'
