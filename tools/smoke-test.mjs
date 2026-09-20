@@ -187,7 +187,8 @@ check('默认打开第一套方案（AK-12 方案 1）',
   one(detail, 'detail-title').textContent === 'AK-12', one(detail, 'detail-title').textContent);
 check('分类显示中文全称（不是 AR 缩写）',
   collect(detail, 'badge')[0].textContent === '突击步枪', collect(detail, 'badge')[0].textContent);
-check('顶栏统计枪械数与方案数', /3 把枪械/.test(el('brandMeta').textContent) && /4 套方案/.test(el('brandMeta').textContent),
+check('顶栏统计枪械数与方案数',
+  el('brandMeta').textContent === (DATA.gunCount + ' 把枪械 · ' + DATA.schemeCount + ' 套方案'),
   el('brandMeta').textContent);
 check('写入 URL 锚点', /^#\//.test(location.hash), location.hash);
 
@@ -202,8 +203,15 @@ check('价格单位显示', one(detail, 'price-unit').textContent === '币', one
 check('价格没有被画进柱状图',
   collect(detail, 'chart-label').every((n) => n.textContent !== '价格'),
   collect(detail, 'chart-label').map((n) => n.textContent).join(','));
-check('柱状图行数 = 属性数（10 项，不含价格）',
-  collect(detail, 'chart-fill').length === 10, '实际 ' + collect(detail, 'chart-fill').length);
+check('柱状图行数 = 属性数（9 项，不含价格）',
+  collect(detail, 'chart-fill').length === 9, '实际 ' + collect(detail, 'chart-fill').length);
+check('属性顺序 = 基础伤害/优势射程/后坐力控制/操控速度/据枪稳定性/腰际射击精度/护甲伤害/射速/枪口初速',
+  collect(detail, 'chart-label').map((n) => n.textContent).join(',') ===
+    '基础伤害,优势射程,后坐力控制,操控速度,据枪稳定性,腰际射击精度,护甲伤害,射速,枪口初速',
+  collect(detail, 'chart-label').map((n) => n.textContent).join(','));
+check('区间属性取中值并原样显示（基础伤害 38-42）',
+  collect(detail, 'chart-value').some((v) => v.textContent.startsWith('38-42')),
+  collect(detail, 'chart-value').map((v) => v.textContent).join(' | '));
 flushRaf();
 check('柱状图按数值撑开宽度',
   collect(detail, 'chart-fill').every((f) => /%$/.test(f.style.width)));
@@ -223,13 +231,17 @@ check('页脚只有最后更新时间', /^最后更新：/.test(el('footerMeta')
 /* ------------------------------------------------------------ 侧边栏 ---- */
 
 section('侧边栏三级结构');
-check('渲染出 2 个分类分组', collect(nav, 'nav-group').length === 2);
-check('渲染出 3 个枪械行', collect(nav, 'nav-gun').length === 3);
-check('渲染出 4 个方案项', collect(nav, 'nav-item').length === 4, '实际 ' + collect(nav, 'nav-item').length);
-check('每个方案都有「加入对比」按钮', collect(nav, 'nav-add').length === 4);
+check('渲染出与数据一致数量的分类分组', collect(nav, 'nav-group').length === DATA.categories.length,
+  '实际 ' + collect(nav, 'nav-group').length);
+check('渲染出与数据一致数量的枪械行', collect(nav, 'nav-gun').length === DATA.gunCount,
+  '实际 ' + collect(nav, 'nav-gun').length);
+check('渲染出与数据一致数量的方案项', collect(nav, 'nav-item').length === DATA.schemeCount,
+  '实际 ' + collect(nav, 'nav-item').length);
+check('每个方案都有「加入对比」按钮', collect(nav, 'nav-add').length === DATA.schemeCount);
 check('当前枪械（AK-12）的方案列表是展开的',
   collect(nav, 'nav-gun').filter((b) => b.textContent.includes('AK-12') && b.dataset.open !== 'true').length === 0);
-check('方案项显示简介', collect(nav, 'nav-item-feat').length === 4);
+check('方案项显示简介', collect(nav, 'nav-item-feat').length === DATA.schemeCount,
+  '实际 ' + collect(nav, 'nav-item-feat').length);
 
 // 展开 M4A1
 const m4Row = collect(nav, 'nav-gun').find((b) => b.textContent.includes('M4A1'));
@@ -313,11 +325,14 @@ check('后坐力控制行标出更高的一方（方案 2：88）',
   recoil && !recoil.children[1].classList.contains('best') && recoil.children[2].classList.contains('best'),
   recoil ? recoil.children[1].className + ' | ' + recoil.children[2].className : '没找到该行');
 
-const ads = rowByLabel('举镜时间');
-check('举镜时间行标出更低的一方（方案 1：320ms，越低越好）',
-  ads && ads.children[1].classList.contains('best') && !ads.children[2].classList.contains('best'),
-  ads ? ads.children[1].className + ' | ' + ads.children[2].className : '没找到该行');
-check('对比页标注了 ↓ 反向属性（举镜时间）', collect(detail, 'cmp-down').length >= 1, '实际 ' + collect(detail, 'cmp-down').length);
+const armor = rowByLabel('护甲伤害');
+check('护甲伤害也参与对比', !!armor, '没找到护甲伤害行');
+
+check('标准 9 项属性均为正向（越高越好），本组对比没有 ↓ 标记',
+  collect(detail, 'cmp-down').length === 0, '实际 ' + collect(detail, 'cmp-down').length);
+check('「越低越好」的反向判定配置仍保留（供以后写举镜时间/重量等属性时用）',
+  Array.isArray(DATA.inverseStats) && DATA.inverseStats.indexOf('举镜时间') !== -1 && DATA.inverseStats.indexOf('重量') !== -1,
+  JSON.stringify(DATA.inverseStats));
 check('射速是正向属性，不标 ↓',
   (() => {
     const r = rowByLabel('射速');
@@ -346,7 +361,7 @@ el('searchInput').value = '控枪';
 el('searchInput').dispatch('input');
 check('按 feat 简介也能搜到方案', collect(nav, 'nav-item').length === 1, '实际 ' + collect(nav, 'nav-item').length);
 el('searchClear').dispatch('click');
-check('清空搜索后恢复 3 把枪', collect(nav, 'nav-gun').length === 3);
+check('清空搜索后恢复全部枪械', collect(nav, 'nav-gun').length === DATA.gunCount);
 
 /* ------------------------------------------------------------ 折叠 ---- */
 

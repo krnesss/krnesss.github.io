@@ -499,7 +499,7 @@
       chartCard.appendChild(chart);
 
       var legend = make('p', 'card-sub legend-note');
-      legend.textContent = '横条长度：0–100 的评分项按百分制显示，伤害 / 射程 / 枪口初速按全部方案中的最大值折算（括号内为占比）；蓝色条目表示越低越好。';
+      legend.textContent = '横条长度：0–100 的评分项按百分制显示；射速、枪口初速这类大数值按全部方案中的最大值折算（括号内为占比）；标 ↓ 的条目表示越低越好。';
       chartCard.appendChild(legend);
 
       requestAnimationFrame(function () {
@@ -686,7 +686,7 @@
     el.detail.appendChild(scroll);
 
     var note = make('p', 'card-sub legend-note');
-    note.textContent = '绿色高亮为该行更优的一方（举镜时间、重量等标 ↓ 的属性越低越好，其余属性越高越好）；价格行的「最低」标记的是花费最少的一套。';
+    note.textContent = '绿色高亮为该行更优的一方（数值越高越好；若某属性带 ↓ 则越低越好）；价格行的「最低」标记的是花费最少的一套。';
     el.detail.appendChild(note);
 
     document.title = '方案对比 · ' + entries.length + ' 套';

@@ -1,9 +1,9 @@
 /* 由 tools/build-data.mjs 自动生成，请勿手动修改 */
 window.__GUN_DATA__ = {
-  "generatedAt": "2026-09-20T13:11:42.775Z",
+  "generatedAt": "2026-09-20T13:27:28.692Z",
   "sourceDir": "save",
-  "gunCount": 3,
-  "schemeCount": 4,
+  "gunCount": 4,
+  "schemeCount": 5,
   "priceKey": "价格",
   "inverseStats": [
     "举镜时间",
@@ -13,18 +13,15 @@ window.__GUN_DATA__ = {
     "换弹时间"
   ],
   "statOrder": [
+    "基础伤害",
+    "优势射程",
     "后坐力控制",
     "操控速度",
-    "精准度",
-    "稳定性",
-    "腰射精度",
-    "伤害",
-    "射程",
-    "枪口初速",
+    "据枪稳定性",
+    "腰际射击精度",
+    "护甲伤害",
     "射速",
-    "弹匣容量",
-    "举镜时间",
-    "重量"
+    "枪口初速"
   ],
   "categories": [
     {
@@ -63,6 +60,28 @@ window.__GUN_DATA__ = {
               },
               "stats": [
                 {
+                  "key": "基础伤害",
+                  "value": 40,
+                  "unit": "",
+                  "display": "38-42",
+                  "inverse": false,
+                  "scale": "percent",
+                  "bar": 40,
+                  "percentOfMax": 90.9,
+                  "max": 44
+                },
+                {
+                  "key": "优势射程",
+                  "value": 61,
+                  "unit": "m",
+                  "display": "61 m",
+                  "inverse": false,
+                  "scale": "percent",
+                  "bar": 61,
+                  "percentOfMax": 82.4,
+                  "max": 74
+                },
+                {
                   "key": "后坐力控制",
                   "value": 64,
                   "unit": "",
@@ -85,18 +104,7 @@ window.__GUN_DATA__ = {
                   "max": 91
                 },
                 {
-                  "key": "精准度",
-                  "value": 66,
-                  "unit": "",
-                  "display": "66",
-                  "inverse": false,
-                  "scale": "percent",
-                  "bar": 66,
-                  "percentOfMax": 78.6,
-                  "max": 84
-                },
-                {
-                  "key": "稳定性",
+                  "key": "据枪稳定性",
                   "value": 72,
                   "unit": "",
                   "display": "72",
@@ -107,7 +115,7 @@ window.__GUN_DATA__ = {
                   "max": 91
                 },
                 {
-                  "key": "腰射精度",
+                  "key": "腰际射击精度",
                   "value": 51,
                   "unit": "",
                   "display": "51",
@@ -118,37 +126,15 @@ window.__GUN_DATA__ = {
                   "max": 83
                 },
                 {
-                  "key": "伤害",
-                  "value": 40,
+                  "key": "护甲伤害",
+                  "value": 50,
                   "unit": "",
-                  "display": "38-42",
+                  "display": "50",
                   "inverse": false,
                   "scale": "percent",
-                  "bar": 40,
-                  "percentOfMax": 90.9,
-                  "max": 44
-                },
-                {
-                  "key": "射程",
-                  "value": 61,
-                  "unit": "m",
-                  "display": "61 m",
-                  "inverse": false,
-                  "scale": "percent",
-                  "bar": 61,
-                  "percentOfMax": 82.4,
-                  "max": 74
-                },
-                {
-                  "key": "枪口初速",
-                  "value": 830,
-                  "unit": "m/s",
-                  "display": "830 m/s",
-                  "inverse": false,
-                  "scale": "relative",
-                  "bar": 90.2,
-                  "percentOfMax": 90.2,
-                  "max": 920
+                  "bar": 50,
+                  "percentOfMax": 100,
+                  "max": 50
                 },
                 {
                   "key": "射速",
@@ -162,15 +148,15 @@ window.__GUN_DATA__ = {
                   "max": 1200
                 },
                 {
-                  "key": "举镜时间",
-                  "value": 355,
-                  "unit": "ms",
-                  "display": "355 ms",
-                  "inverse": true,
+                  "key": "枪口初速",
+                  "value": 830,
+                  "unit": "m/s",
+                  "display": "830 m/s",
+                  "inverse": false,
                   "scale": "relative",
-                  "bar": 78.5,
-                  "percentOfMax": 78.5,
-                  "max": 452
+                  "bar": 90.2,
+                  "percentOfMax": 90.2,
+                  "max": 920
                 }
               ]
             }
@@ -208,6 +194,28 @@ window.__GUN_DATA__ = {
               },
               "stats": [
                 {
+                  "key": "基础伤害",
+                  "value": 42,
+                  "unit": "",
+                  "display": "42",
+                  "inverse": false,
+                  "scale": "percent",
+                  "bar": 42,
+                  "percentOfMax": 95.5,
+                  "max": 44
+                },
+                {
+                  "key": "优势射程",
+                  "value": 58,
+                  "unit": "m",
+                  "display": "58 m",
+                  "inverse": false,
+                  "scale": "percent",
+                  "bar": 58,
+                  "percentOfMax": 78.4,
+                  "max": 74
+                },
+                {
                   "key": "后坐力控制",
                   "value": 78,
                   "unit": "",
@@ -230,18 +238,7 @@ window.__GUN_DATA__ = {
                   "max": 91
                 },
                 {
-                  "key": "精准度",
-                  "value": 71,
-                  "unit": "",
-                  "display": "71",
-                  "inverse": false,
-                  "scale": "percent",
-                  "bar": 71,
-                  "percentOfMax": 84.5,
-                  "max": 84
-                },
-                {
-                  "key": "稳定性",
+                  "key": "据枪稳定性",
                   "value": 80,
                   "unit": "",
                   "display": "80",
@@ -252,7 +249,7 @@ window.__GUN_DATA__ = {
                   "max": 91
                 },
                 {
-                  "key": "腰射精度",
+                  "key": "腰际射击精度",
                   "value": 44,
                   "unit": "",
                   "display": "44",
@@ -263,37 +260,15 @@ window.__GUN_DATA__ = {
                   "max": 83
                 },
                 {
-                  "key": "伤害",
-                  "value": 42,
+                  "key": "护甲伤害",
+                  "value": 45,
                   "unit": "",
-                  "display": "42",
+                  "display": "45",
                   "inverse": false,
                   "scale": "percent",
-                  "bar": 42,
-                  "percentOfMax": 95.5,
-                  "max": 44
-                },
-                {
-                  "key": "射程",
-                  "value": 58,
-                  "unit": "m",
-                  "display": "58 m",
-                  "inverse": false,
-                  "scale": "percent",
-                  "bar": 58,
-                  "percentOfMax": 78.4,
-                  "max": 74
-                },
-                {
-                  "key": "枪口初速",
-                  "value": 880,
-                  "unit": "m/s",
-                  "display": "880 m/s",
-                  "inverse": false,
-                  "scale": "relative",
-                  "bar": 95.7,
-                  "percentOfMax": 95.7,
-                  "max": 920
+                  "bar": 45,
+                  "percentOfMax": 90,
+                  "max": 50
                 },
                 {
                   "key": "射速",
@@ -307,15 +282,15 @@ window.__GUN_DATA__ = {
                   "max": 1200
                 },
                 {
-                  "key": "举镜时间",
-                  "value": 320,
-                  "unit": "ms",
-                  "display": "320 ms",
-                  "inverse": true,
+                  "key": "枪口初速",
+                  "value": 880,
+                  "unit": "m/s",
+                  "display": "880 m/s",
+                  "inverse": false,
                   "scale": "relative",
-                  "bar": 70.8,
-                  "percentOfMax": 70.8,
-                  "max": 452
+                  "bar": 95.7,
+                  "percentOfMax": 95.7,
+                  "max": 920
                 }
               ]
             },
@@ -343,6 +318,28 @@ window.__GUN_DATA__ = {
               },
               "stats": [
                 {
+                  "key": "基础伤害",
+                  "value": 44,
+                  "unit": "",
+                  "display": "44",
+                  "inverse": false,
+                  "scale": "percent",
+                  "bar": 44,
+                  "percentOfMax": 100,
+                  "max": 44
+                },
+                {
+                  "key": "优势射程",
+                  "value": 74,
+                  "unit": "m",
+                  "display": "74 m",
+                  "inverse": false,
+                  "scale": "percent",
+                  "bar": 74,
+                  "percentOfMax": 100,
+                  "max": 74
+                },
+                {
                   "key": "后坐力控制",
                   "value": 88,
                   "unit": "",
@@ -365,18 +362,7 @@ window.__GUN_DATA__ = {
                   "max": 91
                 },
                 {
-                  "key": "精准度",
-                  "value": 84,
-                  "unit": "",
-                  "display": "84",
-                  "inverse": false,
-                  "scale": "percent",
-                  "bar": 84,
-                  "percentOfMax": 100,
-                  "max": 84
-                },
-                {
-                  "key": "稳定性",
+                  "key": "据枪稳定性",
                   "value": 91,
                   "unit": "",
                   "display": "91",
@@ -387,7 +373,7 @@ window.__GUN_DATA__ = {
                   "max": 91
                 },
                 {
-                  "key": "腰射精度",
+                  "key": "腰际射击精度",
                   "value": 33,
                   "unit": "",
                   "display": "33",
@@ -398,37 +384,15 @@ window.__GUN_DATA__ = {
                   "max": 83
                 },
                 {
-                  "key": "伤害",
-                  "value": 44,
+                  "key": "护甲伤害",
+                  "value": 48,
                   "unit": "",
-                  "display": "44",
+                  "display": "48",
                   "inverse": false,
                   "scale": "percent",
-                  "bar": 44,
-                  "percentOfMax": 100,
-                  "max": 44
-                },
-                {
-                  "key": "射程",
-                  "value": 74,
-                  "unit": "m",
-                  "display": "74 m",
-                  "inverse": false,
-                  "scale": "percent",
-                  "bar": 74,
-                  "percentOfMax": 100,
-                  "max": 74
-                },
-                {
-                  "key": "枪口初速",
-                  "value": 920,
-                  "unit": "m/s",
-                  "display": "920 m/s",
-                  "inverse": false,
-                  "scale": "relative",
-                  "bar": 100,
-                  "percentOfMax": 100,
-                  "max": 920
+                  "bar": 48,
+                  "percentOfMax": 96,
+                  "max": 50
                 },
                 {
                   "key": "射速",
@@ -442,15 +406,160 @@ window.__GUN_DATA__ = {
                   "max": 1200
                 },
                 {
+                  "key": "枪口初速",
+                  "value": 920,
+                  "unit": "m/s",
+                  "display": "920 m/s",
+                  "inverse": false,
+                  "scale": "relative",
+                  "bar": 100,
+                  "percentOfMax": 100,
+                  "max": 920
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "突击步枪/MDR",
+          "name": "MDR",
+          "category": "突击步枪",
+          "categoryDir": "AR",
+          "dir": "save/AR/MDR",
+          "schemeCount": 1,
+          "schemes": [
+            {
+              "id": "突击步枪/MDR/1",
+              "index": 1,
+              "dirName": "1",
+              "label": "方案 1",
+              "gunName": "MDR",
+              "category": "突击步枪",
+              "dir": "save/AR/MDR/1",
+              "feat": "近战突击流：腰射与操控优先，室内短兵相接几乎不用开镜",
+              "featShort": "近战突击流：腰射与操控优先，室内短兵相接几乎不用开镜",
+              "featFile": "feat.txt",
+              "image": "save/AR/MDR/1/overview.svg",
+              "imageFile": "overview.svg",
+              "code": "6LBUUPS01LLPFVAKCB3P1",
+              "codeFile": "code.txt",
+              "statsFile": "stats.txt",
+              "price": {
+                "key": "价格",
+                "value": 245000,
+                "unit": "币",
+                "display": "245000 币"
+              },
+              "stats": [
+                {
+                  "key": "基础伤害",
+                  "value": 42,
+                  "unit": "",
+                  "display": "42",
+                  "inverse": false,
+                  "scale": "percent",
+                  "bar": 42,
+                  "percentOfMax": 95.5,
+                  "max": 44
+                },
+                {
+                  "key": "优势射程",
+                  "value": 58,
+                  "unit": "m",
+                  "display": "58 m",
+                  "inverse": false,
+                  "scale": "percent",
+                  "bar": 58,
+                  "percentOfMax": 78.4,
+                  "max": 74
+                },
+                {
+                  "key": "后坐力控制",
+                  "value": 78,
+                  "unit": "",
+                  "display": "78",
+                  "inverse": false,
+                  "scale": "percent",
+                  "bar": 78,
+                  "percentOfMax": 88.6,
+                  "max": 88
+                },
+                {
+                  "key": "操控速度",
+                  "value": 62,
+                  "unit": "",
+                  "display": "62",
+                  "inverse": false,
+                  "scale": "percent",
+                  "bar": 62,
+                  "percentOfMax": 68.1,
+                  "max": 91
+                },
+                {
+                  "key": "据枪稳定性",
+                  "value": 80,
+                  "unit": "",
+                  "display": "80",
+                  "inverse": false,
+                  "scale": "percent",
+                  "bar": 80,
+                  "percentOfMax": 87.9,
+                  "max": 91
+                },
+                {
+                  "key": "腰际射击精度",
+                  "value": 44,
+                  "unit": "",
+                  "display": "44",
+                  "inverse": false,
+                  "scale": "percent",
+                  "bar": 44,
+                  "percentOfMax": 53,
+                  "max": 83
+                },
+                {
+                  "key": "射速",
+                  "value": 800,
+                  "unit": "发/分",
+                  "display": "800 发/分",
+                  "inverse": false,
+                  "scale": "relative",
+                  "bar": 66.7,
+                  "percentOfMax": 66.7,
+                  "max": 1200
+                },
+                {
+                  "key": "枪口初速",
+                  "value": 880,
+                  "unit": "m/s",
+                  "display": "880 m/s",
+                  "inverse": false,
+                  "scale": "relative",
+                  "bar": 95.7,
+                  "percentOfMax": 95.7,
+                  "max": 920
+                },
+                {
+                  "key": "精准度",
+                  "value": 71,
+                  "unit": "",
+                  "display": "71",
+                  "inverse": false,
+                  "scale": "percent",
+                  "bar": 71,
+                  "percentOfMax": 100,
+                  "max": 71
+                },
+                {
                   "key": "举镜时间",
-                  "value": 452,
+                  "value": 320,
                   "unit": "ms",
-                  "display": "452 ms",
+                  "display": "320 ms",
                   "inverse": true,
                   "scale": "relative",
                   "bar": 100,
                   "percentOfMax": 100,
-                  "max": 452
+                  "max": 320
                 }
               ]
             }
@@ -494,6 +603,28 @@ window.__GUN_DATA__ = {
               },
               "stats": [
                 {
+                  "key": "基础伤害",
+                  "value": 27,
+                  "unit": "",
+                  "display": "27",
+                  "inverse": false,
+                  "scale": "percent",
+                  "bar": 27,
+                  "percentOfMax": 61.4,
+                  "max": 44
+                },
+                {
+                  "key": "优势射程",
+                  "value": 32,
+                  "unit": "m",
+                  "display": "32 m",
+                  "inverse": false,
+                  "scale": "percent",
+                  "bar": 32,
+                  "percentOfMax": 43.2,
+                  "max": 74
+                },
+                {
                   "key": "后坐力控制",
                   "value": 86,
                   "unit": "",
@@ -516,18 +647,7 @@ window.__GUN_DATA__ = {
                   "max": 91
                 },
                 {
-                  "key": "精准度",
-                  "value": 58,
-                  "unit": "",
-                  "display": "58",
-                  "inverse": false,
-                  "scale": "percent",
-                  "bar": 58,
-                  "percentOfMax": 69,
-                  "max": 84
-                },
-                {
-                  "key": "稳定性",
+                  "key": "据枪稳定性",
                   "value": 74,
                   "unit": "",
                   "display": "74",
@@ -538,7 +658,7 @@ window.__GUN_DATA__ = {
                   "max": 91
                 },
                 {
-                  "key": "腰射精度",
+                  "key": "腰际射击精度",
                   "value": 83,
                   "unit": "",
                   "display": "83",
@@ -549,37 +669,15 @@ window.__GUN_DATA__ = {
                   "max": 83
                 },
                 {
-                  "key": "伤害",
-                  "value": 27,
-                  "unit": "",
-                  "display": "27",
-                  "inverse": false,
-                  "scale": "percent",
-                  "bar": 27,
-                  "percentOfMax": 61.4,
-                  "max": 44
-                },
-                {
-                  "key": "射程",
+                  "key": "护甲伤害",
                   "value": 32,
-                  "unit": "m",
-                  "display": "32 m",
+                  "unit": "",
+                  "display": "32",
                   "inverse": false,
                   "scale": "percent",
                   "bar": 32,
-                  "percentOfMax": 43.2,
-                  "max": 74
-                },
-                {
-                  "key": "枪口初速",
-                  "value": 390,
-                  "unit": "m/s",
-                  "display": "390 m/s",
-                  "inverse": false,
-                  "scale": "relative",
-                  "bar": 42.4,
-                  "percentOfMax": 42.4,
-                  "max": 920
+                  "percentOfMax": 64,
+                  "max": 50
                 },
                 {
                   "key": "射速",
@@ -593,15 +691,15 @@ window.__GUN_DATA__ = {
                   "max": 1200
                 },
                 {
-                  "key": "举镜时间",
-                  "value": 210,
-                  "unit": "ms",
-                  "display": "210 ms",
-                  "inverse": true,
+                  "key": "枪口初速",
+                  "value": 390,
+                  "unit": "m/s",
+                  "display": "390 m/s",
+                  "inverse": false,
                   "scale": "relative",
-                  "bar": 46.5,
-                  "percentOfMax": 46.5,
-                  "max": 452
+                  "bar": 42.4,
+                  "percentOfMax": 42.4,
+                  "max": 920
                 }
               ]
             }

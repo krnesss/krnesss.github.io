@@ -100,12 +100,25 @@ const UNCATEGORIZED_LABEL = '未分类';
 /** 「价格」不参与柱状图，会被单独抽取出来在改枪码下方醒目展示 */
 const PRICE_KEY_RE = /^\s*(价格|总价|造价|花费)\s*$/;
 
-/** 属性在图表里的展示顺序，txt 里没出现的会自动跳过，没列到的会排在后面 */
+/**
+ * 属性在图表里的展示顺序（按游戏内改枪界面的顺序）。
+ * txt 里没出现的会自动跳过，没列到的属性会排在最后。
+ */
 const STAT_ORDER = [
-  '后坐力控制', '操控速度', '精准度', '稳定性', '腰射精度',
-  '伤害', '射程', '枪口初速',
-  '射速', '弹匣容量', '举镜时间', '重量',
+  '基础伤害', '优势射程', '后坐力控制', '操控速度', '据枪稳定性',
+  '腰际射击精度', '护甲伤害', '射速', '枪口初速',
 ];
+
+/**
+ * 属性别名：允许用旧名字或简称书写，页面统一显示成标准名。
+ * 例如 stats.txt 里写「伤害: 42」会显示成「基础伤害」。
+ */
+const STAT_LABELS = {
+  伤害: '基础伤害',
+  射程: '优势射程',
+  稳定性: '据枪稳定性',
+  腰射精度: '腰际射击精度',
+};
 
 /** 这些属性「越低越好」，图表里会换一种颜色，对比时会标出更优的一方（其余属性越高越好） */
 const INVERSE_STATS = new Set([
@@ -171,7 +184,8 @@ function parseStatLine(raw) {
   const m = line.match(STAT_SEP_RE) || line.match(STAT_SPACE_RE);
   if (!m) return null;
 
-  const key = m[1].trim().replace(/\s+/g, ' ');
+  let key = m[1].trim().replace(/\s+/g, ' ');
+  key = STAT_LABELS[key] || key;
   if (!key || /^[-+]?\d/.test(key)) return null;
 
   const first = Number(m[2]);
