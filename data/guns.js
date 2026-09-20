@@ -1,6 +1,6 @@
 /* 由 tools/build-data.mjs 自动生成，请勿手动修改 */
 window.__GUN_DATA__ = {
-  "generatedAt": "2026-09-20T14:35:30.535Z",
+  "generatedAt": "2026-09-20T15:13:25.572Z",
   "sourceDir": "save",
   "gunCount": 9,
   "schemeCount": 16,
@@ -694,12 +694,12 @@ window.__GUN_DATA__ = {
               "gunName": "KC17",
               "category": "突击步枪",
               "dir": "save/AR/KC17/2",
-              "feat": "鏖战轻语",
-              "featShort": "鏖战轻语",
+              "feat": "1.5/3.5远程压制",
+              "featShort": "1.5/3.5远程压制",
               "featFile": "feat.txt",
               "image": "save/AR/KC17/2/overview.png",
               "imageFile": "overview.png",
-              "code": "1.5/3.5远程压制",
+              "code": "6LBV40001LLPFVAKCB3P1",
               "codeFile": "code.txt",
               "statsFile": "stats.txt",
               "price": {
