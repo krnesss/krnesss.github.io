@@ -1,0 +1,16 @@
+{
+  "name": "df-gun-codes",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "三角洲行动改枪码展示站：按分类浏览改枪方案，查看概览图与属性对比图（GitHub Pages 静态托管）",
+  "scripts": {
+    "build": "node tools/build-data.mjs",
+    "serve": "node tools/serve.mjs",
+    "dev": "node tools/build-data.mjs && node tools/serve.mjs",
+    "test": "node tools/build-data.mjs && node tools/smoke-test.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

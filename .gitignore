@@ -1,0 +1,10 @@
+# 依赖与构建产物
+node_modules/
+
+# GitHub Actions 里的临时发布目录
+_site/
+
+# 系统垃圾文件
+.DS_Store
+Thumbs.db
+desktop.ini

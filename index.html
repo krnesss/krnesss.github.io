@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>三角洲行动 · 改枪码展示</title>
+<meta name="description" content="三角洲行动改枪码查询：按枪械分类浏览改枪方案，查看方案概览图与各项属性对比。">
+<meta name="theme-color" content="#0b0f14">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%23ff8a1f' stroke-width='3'/%3E%3Cpath d='M16 2v9M16 21v9M2 16h9M21 16h9' stroke='%23ff8a1f' stroke-width='3'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="26" height="26"><circle cx="16" cy="16" r="12" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M16 3v8M16 21v8M3 16h8M21 16h8" stroke="currentColor" stroke-width="2.4"/><circle cx="16" cy="16" r="2.6" fill="currentColor"/></svg>
+      </span>
+      <span class="brand-text">
+        <strong>三角洲行动 · 改枪码</strong>
+        <small id="brandMeta">加载中…</small>
+      </span>
+    </div>
+
+    <div class="search">
+      <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16.5 16.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <input id="searchInput" type="search" placeholder="搜索枪械名称…" autocomplete="off" aria-label="搜索枪械名称">
+      <button id="searchClear" class="search-clear" type="button" title="清空搜索" hidden>×</button>
+    </div>
+  </div>
+</header>
+
+<div id="banner" class="banner" hidden></div>
+
+<main class="layout">
+  <aside class="sidebar" id="sidebar" aria-label="枪械分类">
+    <div class="sidebar-head">
+      <span>枪械列表</span>
+      <button id="collapseAll" class="link-btn" type="button">全部折叠</button>
+    </div>
+    <nav id="gunNav" class="gun-nav"></nav>
+    <p id="navEmpty" class="nav-empty" hidden>没有匹配的枪械</p>
+  </aside>
+
+  <section class="content" id="content">
+    <div id="detail" class="detail"></div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <span>数据来自仓库 <code>save/</code> 目录，由 <code>tools/build-data.mjs</code> 生成。</span>
+  <span id="footerMeta"></span>
+</footer>
+
+<div id="lightbox" class="lightbox" hidden role="dialog" aria-modal="true" aria-label="概览图预览">
+  <button class="lightbox-close" type="button" aria-label="关闭">×</button>
+  <img id="lightboxImg" alt="">
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="data/guns.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

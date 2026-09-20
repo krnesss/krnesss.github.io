@@ -1,0 +1,12 @@
+# 统一用 LF 换行，避免 Windows / Linux 之间反复产生换行差异
+* text=auto eol=lf
+
+# 二进制资源不做换行转换
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.gif binary
+*.avif binary
+*.bmp binary
+*.ico binary
