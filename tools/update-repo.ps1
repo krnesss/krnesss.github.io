@@ -7,7 +7,7 @@
       1. 环境检查：git / node 是否可用、有没有卡在半途的 rebase 或 merge
       2. 仓库准备：没有 .git 就 git init；没有 origin 就自动添加远程地址
       3. 构建数据：node tools/build-data.mjs（扫描 save/ 生成 data/）
-      4. 自检：node tools/smoke-test.mjs（76 项页面与数据断言）
+      4. 自检：node tools/smoke-test.mjs（页面与数据断言）
       5. 预览改动：列出这次会提交哪些文件（含非 ASCII 路径提醒）
       6. 提交：git add -A + git commit（提交信息不写就自动生成）
       7. 推送：git push（首次自动带 -u origin <分支>）
@@ -274,7 +274,7 @@ if ($SkipTest) {
     Write-Step '自检（已跳过）'
     Write-Note '跳过了冒烟测试，建议重要改动不要跳'
 } else {
-    Write-Step '自检（76 项页面与数据断言）'
+    Write-Step '自检（页面与数据断言）'
     Invoke-Node (Join-Path $Root 'tools\smoke-test.mjs') '自检'
     Write-Ok '自检通过'
 }

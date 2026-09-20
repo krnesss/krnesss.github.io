@@ -1,6 +1,6 @@
 /* 由 tools/build-data.mjs 自动生成，请勿手动修改 */
 window.__GUN_DATA__ = {
-  "generatedAt": "2026-09-20T12:56:38.876Z",
+  "generatedAt": "2026-09-20T13:11:42.775Z",
   "sourceDir": "save",
   "gunCount": 3,
   "schemeCount": 4,
@@ -8,9 +8,9 @@ window.__GUN_DATA__ = {
   "inverseStats": [
     "举镜时间",
     "开镜时间",
-    "换弹时间",
     "重量",
-    "跑射延迟"
+    "跑射延迟",
+    "换弹时间"
   ],
   "statOrder": [
     "后坐力控制",
@@ -21,9 +21,9 @@ window.__GUN_DATA__ = {
     "伤害",
     "射程",
     "枪口初速",
+    "射速",
     "弹匣容量",
     "举镜时间",
-    "换弹时间",
     "重量"
   ],
   "categories": [
@@ -151,6 +151,17 @@ window.__GUN_DATA__ = {
                   "max": 920
                 },
                 {
+                  "key": "射速",
+                  "value": 640,
+                  "unit": "发/分",
+                  "display": "640 发/分",
+                  "inverse": false,
+                  "scale": "relative",
+                  "bar": 53.3,
+                  "percentOfMax": 53.3,
+                  "max": 1200
+                },
+                {
                   "key": "举镜时间",
                   "value": 355,
                   "unit": "ms",
@@ -160,17 +171,6 @@ window.__GUN_DATA__ = {
                   "bar": 78.5,
                   "percentOfMax": 78.5,
                   "max": 452
-                },
-                {
-                  "key": "换弹时间",
-                  "value": 2.7,
-                  "unit": "s",
-                  "display": "2.7 s",
-                  "inverse": true,
-                  "scale": "relative",
-                  "bar": 93.1,
-                  "percentOfMax": 93.1,
-                  "max": 2.9
                 }
               ]
             }
@@ -296,6 +296,17 @@ window.__GUN_DATA__ = {
                   "max": 920
                 },
                 {
+                  "key": "射速",
+                  "value": 800,
+                  "unit": "发/分",
+                  "display": "800 发/分",
+                  "inverse": false,
+                  "scale": "relative",
+                  "bar": 66.7,
+                  "percentOfMax": 66.7,
+                  "max": 1200
+                },
+                {
                   "key": "举镜时间",
                   "value": 320,
                   "unit": "ms",
@@ -305,17 +316,6 @@ window.__GUN_DATA__ = {
                   "bar": 70.8,
                   "percentOfMax": 70.8,
                   "max": 452
-                },
-                {
-                  "key": "换弹时间",
-                  "value": 2.4,
-                  "unit": "s",
-                  "display": "2.4 s",
-                  "inverse": true,
-                  "scale": "relative",
-                  "bar": 82.8,
-                  "percentOfMax": 82.8,
-                  "max": 2.9
                 }
               ]
             },
@@ -431,6 +431,17 @@ window.__GUN_DATA__ = {
                   "max": 920
                 },
                 {
+                  "key": "射速",
+                  "value": 750,
+                  "unit": "发/分",
+                  "display": "750 发/分",
+                  "inverse": false,
+                  "scale": "relative",
+                  "bar": 62.5,
+                  "percentOfMax": 62.5,
+                  "max": 1200
+                },
+                {
                   "key": "举镜时间",
                   "value": 452,
                   "unit": "ms",
@@ -440,17 +451,6 @@ window.__GUN_DATA__ = {
                   "bar": 100,
                   "percentOfMax": 100,
                   "max": 452
-                },
-                {
-                  "key": "换弹时间",
-                  "value": 2.9,
-                  "unit": "s",
-                  "display": "2.9 s",
-                  "inverse": true,
-                  "scale": "relative",
-                  "bar": 100,
-                  "percentOfMax": 100,
-                  "max": 2.9
                 }
               ]
             }
@@ -582,6 +582,17 @@ window.__GUN_DATA__ = {
                   "max": 920
                 },
                 {
+                  "key": "射速",
+                  "value": 1200,
+                  "unit": "发/分",
+                  "display": "1200 发/分",
+                  "inverse": false,
+                  "scale": "relative",
+                  "bar": 100,
+                  "percentOfMax": 100,
+                  "max": 1200
+                },
+                {
                   "key": "举镜时间",
                   "value": 210,
                   "unit": "ms",
@@ -591,17 +602,6 @@ window.__GUN_DATA__ = {
                   "bar": 46.5,
                   "percentOfMax": 46.5,
                   "max": 452
-                },
-                {
-                  "key": "换弹时间",
-                  "value": 2.1,
-                  "unit": "s",
-                  "display": "2.1 s",
-                  "inverse": true,
-                  "scale": "relative",
-                  "bar": 72.4,
-                  "percentOfMax": 72.4,
-                  "max": 2.9
                 }
               ]
             }

@@ -317,7 +317,13 @@ const ads = rowByLabel('举镜时间');
 check('举镜时间行标出更低的一方（方案 1：320ms，越低越好）',
   ads && ads.children[1].classList.contains('best') && !ads.children[2].classList.contains('best'),
   ads ? ads.children[1].className + ' | ' + ads.children[2].className : '没找到该行');
-check('对比页标注了 ↓ 反向属性', collect(detail, 'cmp-down').length >= 2, '实际 ' + collect(detail, 'cmp-down').length);
+check('对比页标注了 ↓ 反向属性（举镜时间）', collect(detail, 'cmp-down').length >= 1, '实际 ' + collect(detail, 'cmp-down').length);
+check('射速是正向属性，不标 ↓',
+  (() => {
+    const r = rowByLabel('射速');
+    return !!r && !collect(r.children[0], 'cmp-down').length;
+  })(),
+  '没找到射速行或它被错误地标成反向');
 check('对比页也能看到每套方案的价格', textOf(detail).includes('245,000') && textOf(detail).includes('312,000'));
 
 // 移除一个 chip

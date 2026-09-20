@@ -686,7 +686,7 @@
     el.detail.appendChild(scroll);
 
     var note = make('p', 'card-sub legend-note');
-    note.textContent = '绿色高亮为该行更优的一方（举镜时间、换弹时间、重量等标 ↓ 的属性越低越好）；价格行的「最低」标记的是花费最少的一套。';
+    note.textContent = '绿色高亮为该行更优的一方（举镜时间、重量等标 ↓ 的属性越低越好，其余属性越高越好）；价格行的「最低」标记的是花费最少的一套。';
     el.detail.appendChild(note);
 
     document.title = '方案对比 · ' + entries.length + ' 套';
