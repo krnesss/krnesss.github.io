@@ -386,6 +386,24 @@ function attachBars(categories) {
   }
 }
 
+/**
+ * 目标：仓库里的路径全部使用 ASCII 字符（枪名/分类名直接就是页面显示名，用英文最省事）。
+ * 这条检查只提示、不阻断构建，方便你随时发现漏改的中文目录名或文件名。
+ */
+function findNonAsciiPaths() {
+  const bad = [];
+  const walk = (dir) => {
+    for (const entry of readdirSafe(dir)) {
+      if (entry.name.startsWith('.')) continue;
+      const abs = path.join(dir, entry.name);
+      if (/[^\x20-\x7E]/.test(entry.name)) bad.push(path.relative(ROOT, abs).split(path.sep).join('/'));
+      if (entry.isDirectory()) walk(abs);
+    }
+  };
+  if (fs.existsSync(SAVE_DIR)) walk(SAVE_DIR);
+  return bad;
+}
+
 function main() {
   const saveExists = fs.existsSync(SAVE_DIR);
   const categories = saveExists ? collectCategories() : [];
@@ -431,6 +449,16 @@ function main() {
   if (!saveExists) {
     console.warn('⚠ 没有找到 save/ 目录，先按 README 建好目录再重新运行本脚本。');
   }
+
+  const nonAscii = findNonAsciiPaths();
+  if (nonAscii.length) {
+    console.warn(`\n⚠ save/ 下有 ${nonAscii.length} 个路径包含非 ASCII 字符（枪名/分类名会直接显示在页面上，建议改成英文）：`);
+    for (const p of nonAscii.slice(0, 20)) console.warn(`  · ${p}`);
+    if (nonAscii.length > 20) console.warn(`  · …另有 ${nonAscii.length - 20} 个`);
+  } else if (saveExists) {
+    console.log('  ✓ save/ 下所有路径都是 ASCII 字符');
+  }
+
   if (warnings.length) {
     console.warn(`\n⚠ ${warnings.length} 条提示：`);
     for (const w of warnings) console.warn(`  · ${w}`);

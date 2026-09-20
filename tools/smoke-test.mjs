@@ -180,6 +180,20 @@ check('详情页路径显示真实目录 save/AR/AK-12/', one(detail, 'detail-pa
   one(detail, 'detail-path').textContent);
 check('详情页写入 URL 锚点', /^#\//.test(location.hash), location.hash);
 
+console.log('\n【路径与显示名的 ASCII 约束】');
+const data = sandbox.__GUN_DATA__;
+const GUNS = data.categories.flatMap((c) => c.guns);
+const ASCII = /^[\x20-\x7E]*$/;
+check('所有枪械目录/文件名都是 ASCII',
+  GUNS.every((g) => [g.dir, g.image, g.imageFile, g.codeFile, g.statsFile].every((v) => v === null || ASCII.test(v))),
+  GUNS.map((g) => g.dir + '|' + g.image).filter((v) => !ASCII.test(v)).join(' , '));
+check('图片 URL 不含百分号编码', GUNS.every((g) => !g.image || !g.image.includes('%')), GUNS.map((g) => g.image).join(' , '));
+check('页面显示名（分类/枪名/锚点 id）都是 ASCII',
+  GUNS.every((g) => [g.id, g.name, g.category].every((v) => ASCII.test(v))),
+  GUNS.map((g) => g.id).filter((v) => !ASCII.test(v)).join(' , '));
+check('分类显示为缩写', data.categories.map((c) => c.name).join(',') === 'AR,SMG',
+  data.categories.map((c) => c.name).join(','));
+
 console.log('\n【侧边栏】');
 check('渲染出 2 个分类分组', collect(el('gunNav'), 'nav-group').length === 2);
 check('渲染出 3 个枪械按钮', collect(el('gunNav'), 'nav-item').length === 3);
@@ -188,13 +202,13 @@ check('分类计数显示正确', collect(el('gunNav'), 'nav-count').map((n) => 
 check('当前枪械被标记为 active', collect(el('gunNav'), 'nav-item').some((b) => b.classList.contains('active')));
 
 console.log('\n【改枪码】');
-check('改枪码内容正确', one(detail, 'code-text').textContent === 'AK-12-近战型-3C7D-51E9-A20B-88F6',
+check('改枪码内容正确（注释行被忽略、只留码）', one(detail, 'code-text').textContent === 'AK-12-3C7D-51E9-A20B-88F6',
   one(detail, 'code-text').textContent);
 check('存在复制按钮', !!one(detail, 'btn'));
 
 console.log('\n【概览图】');
 const img = one(detail, 'overview').children[0];
-check('图片指向 save/ 下的概览图', /^save\/.*%E6%A6%82%E8%A7%88%E5%9B%BE\.svg$/.test(img.src), img.src);
+check('图片指向 save/ 下的概览图（纯 ASCII 路径，无需百分号编码）', img.src === 'save/AR/AK-12/overview.svg', img.src);
 
 console.log('\n【属性柱状图】');
 const fills = collect(detail, 'chart-fill');
@@ -218,7 +232,8 @@ location.hash = '#/' + encodeURIComponent('SMG') + '/' + encodeURIComponent('Vec
 flushHashChange();
 check('切换到 Vector 后重新渲染', one(detail, 'detail-title').textContent === 'Vector', one(detail, 'detail-title').textContent);
 check('Vector 的 11 项属性渲染完成', collect(detail, 'chart-fill').length === 11);
-check('Vector 的改枪码正确', one(detail, 'code-text').textContent === 'Vector-冲锋型-91B4-6D0F-2E77-C53A');
+check('Vector 的改枪码正确', one(detail, 'code-text').textContent === 'Vector-91B4-6D0F-2E77-C53A',
+  one(detail, 'code-text').textContent);
 check('分类徽章随枪械变化（显示为分类缩写 SMG）', collect(detail, 'badge')[0].textContent === 'SMG',
   collect(detail, 'badge')[0].textContent);
 

@@ -1,6 +1,6 @@
 /* 由 tools/build-data.mjs 自动生成，请勿手动修改 */
 window.__GUN_DATA__ = {
-  "generatedAt": "2026-09-20T12:40:11.930Z",
+  "generatedAt": "2026-09-20T12:47:53.366Z",
   "sourceDir": "save",
   "gunCount": 3,
   "categories": [
@@ -14,11 +14,11 @@ window.__GUN_DATA__ = {
           "category": "AR",
           "categoryDir": "AR",
           "dir": "save/AR/AK-12",
-          "image": "save/AR/AK-12/%E6%A6%82%E8%A7%88%E5%9B%BE.svg",
-          "imageFile": "概览图.svg",
-          "code": "AK-12-近战型-3C7D-51E9-A20B-88F6",
-          "codeFile": "1.txt",
-          "statsFile": "2.txt",
+          "image": "save/AR/AK-12/overview.svg",
+          "imageFile": "overview.svg",
+          "code": "AK-12-3C7D-51E9-A20B-88F6",
+          "codeFile": "code.txt",
+          "statsFile": "stats.txt",
           "stats": [
             {
               "key": "后坐力控制",
@@ -144,16 +144,16 @@ window.__GUN_DATA__ = {
           ]
         },
         {
-          "id": "AR/M4A1-突击型",
-          "name": "M4A1-突击型",
+          "id": "AR/M4A1",
+          "name": "M4A1",
           "category": "AR",
           "categoryDir": "AR",
-          "dir": "save/AR/M4A1-突击型",
-          "image": "save/AR/M4A1-%E7%AA%81%E5%87%BB%E5%9E%8B/%E6%A6%82%E8%A7%88%E5%9B%BE.svg",
-          "imageFile": "概览图.svg",
-          "code": "M4A1-突击型-6F2A-9C41-7B8E-3D05",
-          "codeFile": "改枪码.txt",
-          "statsFile": "数据.txt",
+          "dir": "save/AR/M4A1",
+          "image": "save/AR/M4A1/overview.svg",
+          "imageFile": "overview.svg",
+          "code": "M4A1-6F2A-9C41-7B8E-3D05",
+          "codeFile": "code.txt",
+          "statsFile": "stats.txt",
           "stats": [
             {
               "key": "后坐力控制",
@@ -292,9 +292,9 @@ window.__GUN_DATA__ = {
           "dir": "save/SMG/Vector",
           "image": "save/SMG/Vector/overview.svg",
           "imageFile": "overview.svg",
-          "code": "Vector-冲锋型-91B4-6D0F-2E77-C53A",
-          "codeFile": "改枪码.txt",
-          "statsFile": "属性.txt",
+          "code": "Vector-91B4-6D0F-2E77-C53A",
+          "codeFile": "code.txt",
+          "statsFile": "stats.txt",
           "stats": [
             {
               "key": "后坐力控制",
