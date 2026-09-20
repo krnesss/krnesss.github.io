@@ -1,6 +1,6 @@
 /* 由 tools/build-data.mjs 自动生成，请勿手动修改 */
 window.__GUN_DATA__ = {
-  "generatedAt": "2026-09-20T12:34:28.558Z",
+  "generatedAt": "2026-09-20T12:36:36.084Z",
   "sourceDir": "save",
   "gunCount": 3,
   "categories": [

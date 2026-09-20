@@ -344,12 +344,26 @@ function main() {
   const gunCount = categories.reduce((n, c) => n + c.guns.length, 0);
   const statKeys = new Set(categories.flatMap((c) => c.guns.flatMap((g) => g.stats.map((s) => s.key))));
 
-  const payload = {
-    generatedAt: new Date().toISOString(),
+  const body = {
     sourceDir: 'save',
     gunCount,
     categories,
   };
+
+  // 只有当内容真的变了才刷新时间戳，这样重复构建不会产生无意义的文件变动
+  // （比较时固定字段顺序，避免因为键的顺序不同而误判为“变了”）
+  const comparable = (o) => JSON.stringify([o.sourceDir, o.gunCount, o.categories]);
+  let generatedAt = new Date().toISOString();
+  try {
+    const prev = JSON.parse(fs.readFileSync(OUT_JSON, 'utf8'));
+    if (prev && prev.generatedAt && comparable(prev) === comparable(body)) {
+      generatedAt = prev.generatedAt;
+    }
+  } catch {
+    /* 首次生成或旧文件损坏，直接用当前时间 */
+  }
+
+  const payload = { generatedAt, ...body };
 
   fs.mkdirSync(DATA_DIR, { recursive: true });
   fs.writeFileSync(
