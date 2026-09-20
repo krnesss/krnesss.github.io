@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T14:04:40.286Z",
+  "generatedAt": "2026-09-20T14:35:30.535Z",
   "sourceDir": "save",
   "gunCount": 9,
   "schemeCount": 16,
@@ -435,12 +435,12 @@
               "gunName": "K437",
               "category": "突击步枪",
               "dir": "save/AR/K437/2",
-              "feat": "红点轻语",
-              "featShort": "红点轻语",
+              "feat": "丐版一体消音枪管",
+              "featShort": "丐版一体消音枪管",
               "featFile": "feat.txt",
               "image": "save/AR/K437/2/overview.png",
               "imageFile": "overview.png",
-              "code": "丐版一体消音枪管",
+              "code": "6LBV54C01LLPFVAKCB3P1",
               "codeFile": "code.txt",
               "statsFile": "stats.txt",
               "price": {

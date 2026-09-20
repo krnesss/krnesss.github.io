@@ -1,6 +1,6 @@
 /* 由 tools/build-data.mjs 自动生成，请勿手动修改 */
 window.__GUN_DATA__ = {
-  "generatedAt": "2026-09-20T14:04:40.286Z",
+  "generatedAt": "2026-09-20T14:35:30.535Z",
   "sourceDir": "save",
   "gunCount": 9,
   "schemeCount": 16,
@@ -436,12 +436,12 @@ window.__GUN_DATA__ = {
               "gunName": "K437",
               "category": "突击步枪",
               "dir": "save/AR/K437/2",
-              "feat": "红点轻语",
-              "featShort": "红点轻语",
+              "feat": "丐版一体消音枪管",
+              "featShort": "丐版一体消音枪管",
               "featFile": "feat.txt",
               "image": "save/AR/K437/2/overview.png",
               "imageFile": "overview.png",
-              "code": "丐版一体消音枪管",
+              "code": "6LBV54C01LLPFVAKCB3P1",
               "codeFile": "code.txt",
               "statsFile": "stats.txt",
               "price": {

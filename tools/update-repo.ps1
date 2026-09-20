@@ -372,6 +372,28 @@ if (-not $hasRemote) {
 
 Write-Step '推送到 GitHub'
 
+# 如果装了 GitHub CLI 且已登录，就让它接管 github.com 的凭据，
+# 避免继续用 Windows 凭据管理器里可能已经失效的旧凭据。
+$ghCmd = Get-Command gh -ErrorAction SilentlyContinue
+if ($ghCmd) {
+    $prev = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    & gh auth status *> $null
+    $ghLoggedIn = ($LASTEXITCODE -eq 0)
+    $ErrorActionPreference = $prev
+
+    if ($ghLoggedIn) {
+        if ($DryRun) {
+            Write-Info '会执行 gh auth setup-git（让 git 复用 GitHub CLI 的登录）'
+        } else {
+            & gh auth setup-git *> $null
+            Write-Ok '已让 git 复用 GitHub CLI 的登录（gh auth setup-git）'
+        }
+    } else {
+        Write-Note '检测到 gh 未登录；若推送失败，先执行 gh auth login --with-token 再重试'
+    }
+}
+
 $upstreamLines = Invoke-Git @('rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}') -AllowFailure
 $hasUpstream = Test-Git @('rev-parse', '--verify', '--quiet', '@{u}')
 
@@ -388,10 +410,11 @@ foreach ($l in @($pushOut)) { Write-Info ([string]$l) }
 
 if ($pushCode -ne 0) {
     Write-Host ''
-    Write-Host '× 推送失败。改动已经提交在本地了，排除下面几种情况后重新运行脚本即可：' -ForegroundColor Red
-    Write-Info ('1. GitHub 上还没建仓库？去 https://github.com/new 建一个公开仓库，名字填 krnesss.github.io')
-    Write-Info '2. 没登录 / 没权限？在浏览器登录 GitHub 后，用 Git Credential Manager 重新认证一次'
-    Write-Info '3. 远端有新提交（报 non-fast-forward）？加上 -Pull 参数再运行：-Pull'
+    Write-Host '× 推送失败。改动已经提交在本地了，按下面排查后重新运行脚本即可：' -ForegroundColor Red
+    Write-Info '0. 用 GitHub CLI 登录并接管凭据：gh auth login --with-token  →  gh auth setup-git'
+    Write-Info '1. GitHub 上还没建仓库？去 https://github.com/new 建一个公开仓库，名字填 krnesss.github.io'
+    Write-Info '2. token 权限不够？生成 classic token 时勾上 repo（用 gh 登录还需 read:org）'
+    Write-Info '3. 远端有新提交（报 non-fast-forward）？加上 -Pull 参数再运行'
     Write-Info '4. 网络问题？代理 / VPN 打开后重试'
     Write-Info ('本地最新提交：' + (Invoke-Git @('rev-parse', '--short', 'HEAD') -AllowFailure)[0])
     exit 1
