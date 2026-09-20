@@ -34,6 +34,7 @@
     trayCount: document.getElementById('trayCount'),
     trayCompare: document.getElementById('trayCompare'),
     trayClear: document.getElementById('trayClear'),
+    brandHome: document.getElementById('brandHome'),
   };
 
   var LS = {
@@ -692,6 +693,71 @@
     document.title = '方案对比 · ' + entries.length + ' 套';
   }
 
+  /* -------------------------------------------------------------- 主页 */
+
+  function renderHome() {
+    clear(el.detail);
+    compareBtn = null;
+    state.activeId = null;
+
+    var home = make('div', 'home');
+
+    /* 顶部标题区 */
+    var hero = make('div', 'hero');
+    hero.appendChild(make('h1', 'hero-title', '三角洲行动 · 改枪码'));
+    hero.appendChild(make('p', 'hero-sub', '玩家整理的改枪方案站：按分类浏览，一键复制改枪码进游戏。'));
+    var stats = make('div', 'home-stats');
+    stats.appendChild(make('span', null, DATA.categories.length + ' 个分类'));
+    stats.appendChild(make('span', null, DATA.gunCount + ' 把枪械'));
+    stats.appendChild(make('span', null, DATA.schemeCount + ' 套方案'));
+    hero.appendChild(stats);
+    home.appendChild(hero);
+
+    /* 分类卡片 */
+    var catSection = make('section', 'home-section');
+    catSection.appendChild(make('h2', 'home-section-title', '按分类浏览'));
+    var catGrid = make('div', 'category-grid');
+    (DATA.categories || []).forEach(function (cat) {
+      var first = cat.guns[0] && cat.guns[0].schemes[0];
+      var card = make('button', 'category-card');
+      card.type = 'button';
+      card.appendChild(make('span', 'category-card-name', cat.name));
+      card.appendChild(make('span', 'category-card-count', cat.guns.length + ' 把'));
+      card.addEventListener('click', function () {
+        if (first) location.hash = hashForBuild(first.id);
+      });
+      catGrid.appendChild(card);
+    });
+    catSection.appendChild(catGrid);
+    home.appendChild(catSection);
+
+    /* 全部枪械网格 */
+    var gunSection = make('section', 'home-section');
+    gunSection.appendChild(make('h2', 'home-section-title', '全部枪械'));
+    var gunGrid = make('div', 'gun-grid');
+    (DATA.categories || []).forEach(function (cat) {
+      (cat.guns || []).forEach(function (gun) {
+        var first = gun.schemes[0];
+        var card = make('button', 'gun-card');
+        card.type = 'button';
+        var top = make('div', 'gun-card-top');
+        top.appendChild(make('span', 'gun-card-name', gun.name));
+        top.appendChild(make('span', 'gun-card-count', gun.schemes.length + ' 套'));
+        card.appendChild(top);
+        card.appendChild(make('span', 'gun-card-cat', cat.name));
+        card.addEventListener('click', function () {
+          if (first) location.hash = hashForBuild(first.id);
+        });
+        gunGrid.appendChild(card);
+      });
+    });
+    gunSection.appendChild(gunGrid);
+    home.appendChild(gunSection);
+
+    el.detail.appendChild(home);
+    document.title = '三角洲行动 · 改枪码';
+  }
+
   /* ------------------------------------------------------------ 对比栏 */
 
   function renderTray() {
@@ -774,7 +840,7 @@
 
   function readRoute() {
     var raw = location.hash.replace(/^#\/?/, '');
-    if (!raw) return { type: 'none' };
+    if (!raw) return { type: 'home' };
     var segs = raw.split('/').filter(Boolean);
     if (segs[0] === 'compare') {
       var ids = (segs[1] || '').split('|').filter(Boolean).map(dec);
@@ -785,6 +851,12 @@
 
   function applyRoute() {
     var route = readRoute();
+    if (route.type === 'home') {
+      renderHome();
+      renderNav();
+      window.scrollTo({ top: 0, behavior: 'auto' });
+      return true;
+    }
     if (route.type === 'compare') {
       state.compare = route.ids.filter(function (id) { return !!buildsById[id]; });
       saveCompare();
@@ -808,12 +880,8 @@
 
   function goDefault() {
     if (!allBuilds.length) { renderEmptyState(); return; }
-    location.replace(hashForBuild(allBuilds[0].id));
-    if (!applyRoute()) {
-      state.activeId = allBuilds[0].id;
-      renderDetail();
-      renderNav();
-    }
+    renderHome();
+    renderNav();
   }
 
   window.addEventListener('hashchange', function () {
@@ -852,6 +920,12 @@
       e.preventDefault();
       el.searchInput.focus();
     }
+  });
+
+  // 点站点 Logo 回到主页
+  el.brandHome.addEventListener('click', function () {
+    location.hash = '';
+    window.scrollTo({ top: 0, behavior: 'auto' });
   });
 
   el.collapseAll.addEventListener('click', function () {

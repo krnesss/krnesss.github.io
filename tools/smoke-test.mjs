@@ -68,6 +68,7 @@ const IDS = [
   'brandMeta', 'footerMeta', 'banner', 'gunNav', 'navEmpty', 'collapseAll',
   'content', 'detail', 'searchInput', 'searchClear', 'lightbox', 'lightboxImg', 'toast',
   'compareTray', 'trayChips', 'trayCount', 'trayCompare', 'trayClear',
+  'brandHome',
 ];
 
 const document = {
@@ -179,17 +180,43 @@ const DATA = sandbox.__GUN_DATA__;
 const GUNS = DATA.categories.flatMap((c) => c.guns);
 const SCHEMES = GUNS.flatMap((g) => g.schemes);
 
-/* ---------------------------------------------------------- 首屏渲染 ---- */
+/* ---------------------------------------------------------- 主页 ---- */
 
-section('首屏渲染');
+section('主页（空网址落到首页）');
 check('没有抛异常，页面完成初始化', detail.children.length > 0);
-check('默认打开第一套方案（AK-12 方案 1）',
-  one(detail, 'detail-title').textContent === 'AK-12', one(detail, 'detail-title').textContent);
-check('分类显示中文全称（不是 AR 缩写）',
-  collect(detail, 'badge')[0].textContent === '突击步枪', collect(detail, 'badge')[0].textContent);
+check('默认显示主页而不是直接进某把枪', !!one(detail, 'hero') && !one(detail, 'detail-title'));
+check('主页标题正确', one(detail, 'hero-title').textContent === '三角洲行动 · 改枪码', one(detail, 'hero-title').textContent);
+check('主页统计栏数据正确',
+  textOf(one(detail, 'home-stats')) === (DATA.categories.length + ' 个分类' + DATA.gunCount + ' 把枪械' + DATA.schemeCount + ' 套方案'),
+  textOf(one(detail, 'home-stats')));
+check('分类卡片数量与数据一致', collect(detail, 'category-card').length === DATA.categories.length,
+  '实际 ' + collect(detail, 'category-card').length);
+check('枪械卡片数量与数据一致', collect(detail, 'gun-card').length === DATA.gunCount,
+  '实际 ' + collect(detail, 'gun-card').length);
 check('顶栏统计枪械数与方案数',
   el('brandMeta').textContent === (DATA.gunCount + ' 把枪械 · ' + DATA.schemeCount + ' 套方案'),
   el('brandMeta').textContent);
+
+// 点枪械卡片 → 进入该枪的方案 1
+collect(detail, 'gun-card').find((c) => c.textContent.includes('Vector')).dispatch('click');
+flushHashChange();
+check('点击主页枪械卡片能进入详情', one(detail, 'detail-title').textContent === 'Vector', one(detail, 'detail-title').textContent);
+
+// 点 Logo → 回到主页
+el('brandHome').dispatch('click');
+flushHashChange();
+check('点 Logo 回到主页', !!one(detail, 'hero') && !one(detail, 'detail-title'));
+
+// 进入 AK-12 方案 1，开始验证详情页
+location.hash = '#/' + ['突击步枪', 'AK-12', '1'].map(encodeURIComponent).join('/');
+flushHashChange();
+
+/* ---------------------------------------------------------- 详情页 ---- */
+
+section('首屏渲染');
+check('切到 AK-12 方案 1', one(detail, 'detail-title').textContent === 'AK-12', one(detail, 'detail-title').textContent);
+check('分类显示中文全称（不是 AR 缩写）',
+  collect(detail, 'badge')[0].textContent === '突击步枪', collect(detail, 'badge')[0].textContent);
 check('写入 URL 锚点', /^#\//.test(location.hash), location.hash);
 
 /* ------------------------------------------------------------ 改枪码 ---- */
