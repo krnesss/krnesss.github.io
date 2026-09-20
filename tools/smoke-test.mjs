@@ -175,6 +175,9 @@ console.log('\n【首屏渲染】');
 check('没有抛异常，页面完成初始化', detail.children.length > 0);
 check('顶栏显示分类与枪械数量', /分类/.test(el('brandMeta').textContent), el('brandMeta').textContent);
 check('默认选中第一把枪（AK-12）', one(detail, 'detail-title').textContent === 'AK-12', one(detail, 'detail-title').textContent);
+check('分类显示为缩写（AR，而不是目录名）', collect(detail, 'badge')[0].textContent === 'AR', collect(detail, 'badge')[0].textContent);
+check('详情页路径显示真实目录 save/AR/AK-12/', one(detail, 'detail-path').textContent === 'save/AR/AK-12/',
+  one(detail, 'detail-path').textContent);
 check('详情页写入 URL 锚点', /^#\//.test(location.hash), location.hash);
 
 console.log('\n【侧边栏】');
@@ -211,12 +214,13 @@ await tick();
 check('点击后提示已复制', el('toast').hidden === false && one(detail, 'btn').textContent.includes('已复制'));
 
 console.log('\n【路由切换】');
-location.hash = '#/' + encodeURIComponent('冲锋枪') + '/' + encodeURIComponent('Vector');
+location.hash = '#/' + encodeURIComponent('SMG') + '/' + encodeURIComponent('Vector');
 flushHashChange();
 check('切换到 Vector 后重新渲染', one(detail, 'detail-title').textContent === 'Vector', one(detail, 'detail-title').textContent);
 check('Vector 的 11 项属性渲染完成', collect(detail, 'chart-fill').length === 11);
 check('Vector 的改枪码正确', one(detail, 'code-text').textContent === 'Vector-冲锋型-91B4-6D0F-2E77-C53A');
-check('分类徽章随枪械变化', collect(detail, 'badge')[0].textContent === '冲锋枪');
+check('分类徽章随枪械变化（显示为分类缩写 SMG）', collect(detail, 'badge')[0].textContent === 'SMG',
+  collect(detail, 'badge')[0].textContent);
 
 location.hash = '#/不存在的分类/不存在的枪';
 flushHashChange();

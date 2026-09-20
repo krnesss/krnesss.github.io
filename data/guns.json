@@ -1,17 +1,19 @@
 {
-  "generatedAt": "2026-09-20T12:36:36.084Z",
+  "generatedAt": "2026-09-20T12:40:11.930Z",
   "sourceDir": "save",
   "gunCount": 3,
   "categories": [
     {
-      "name": "突击步枪",
+      "name": "AR",
+      "dirName": "AR",
       "guns": [
         {
-          "id": "突击步枪/AK-12",
+          "id": "AR/AK-12",
           "name": "AK-12",
-          "category": "突击步枪",
-          "dir": "save/突击步枪/AK-12",
-          "image": "save/%E7%AA%81%E5%87%BB%E6%AD%A5%E6%9E%AA/AK-12/%E6%A6%82%E8%A7%88%E5%9B%BE.svg",
+          "category": "AR",
+          "categoryDir": "AR",
+          "dir": "save/AR/AK-12",
+          "image": "save/AR/AK-12/%E6%A6%82%E8%A7%88%E5%9B%BE.svg",
           "imageFile": "概览图.svg",
           "code": "AK-12-近战型-3C7D-51E9-A20B-88F6",
           "codeFile": "1.txt",
@@ -141,11 +143,12 @@
           ]
         },
         {
-          "id": "突击步枪/M4A1-突击型",
+          "id": "AR/M4A1-突击型",
           "name": "M4A1-突击型",
-          "category": "突击步枪",
-          "dir": "save/突击步枪/M4A1-突击型",
-          "image": "save/%E7%AA%81%E5%87%BB%E6%AD%A5%E6%9E%AA/M4A1-%E7%AA%81%E5%87%BB%E5%9E%8B/%E6%A6%82%E8%A7%88%E5%9B%BE.svg",
+          "category": "AR",
+          "categoryDir": "AR",
+          "dir": "save/AR/M4A1-突击型",
+          "image": "save/AR/M4A1-%E7%AA%81%E5%87%BB%E5%9E%8B/%E6%A6%82%E8%A7%88%E5%9B%BE.svg",
           "imageFile": "概览图.svg",
           "code": "M4A1-突击型-6F2A-9C41-7B8E-3D05",
           "codeFile": "改枪码.txt",
@@ -277,14 +280,16 @@
       ]
     },
     {
-      "name": "冲锋枪",
+      "name": "SMG",
+      "dirName": "SMG",
       "guns": [
         {
-          "id": "冲锋枪/Vector",
+          "id": "SMG/Vector",
           "name": "Vector",
-          "category": "冲锋枪",
-          "dir": "save/冲锋枪/Vector",
-          "image": "save/%E5%86%B2%E9%94%8B%E6%9E%AA/Vector/overview.svg",
+          "category": "SMG",
+          "categoryDir": "SMG",
+          "dir": "save/SMG/Vector",
+          "image": "save/SMG/Vector/overview.svg",
           "imageFile": "overview.svg",
           "code": "Vector-冲锋型-91B4-6D0F-2E77-C53A",
           "codeFile": "改枪码.txt",

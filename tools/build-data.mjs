@@ -9,12 +9,12 @@
  *
  * 目录约定（分类用一级子目录表示）：
  *   save/
- *     突击步枪/
+ *     AR/                   ← 一级目录 = 分类（缩写 / 中文名 / 英文全称都行，见 CATEGORY_LABELS）
  *       M4A1/
  *         overview.png      ← 概览图（png/jpg/webp/gif/svg 都行，任意文件名）
  *         改枪码.txt         ← 第一个 txt：改枪码
  *         数据.txt           ← 第二个 txt：各项数据，每行「名称: 数值」
- *     冲锋枪/
+ *     SMG/
  *       ...
  *
  * 容错说明：
@@ -23,7 +23,7 @@
  *      仍无法判断时，按文件名的自然顺序取第一个为改枪码、第二个为数据。
  *   2. 数据行支持：`后坐力控制: 78`、`射程：45 m`、`伤害: 35-40`、`价格 = 250000 币`
  *      逗号/分号/斜杠开头的行会被当作注释忽略。
- *   3. 也兼容「枪械文件夹直接放在 save/ 下」的平铺写法，这类枪械会归入「未分类」。
+ *   3. 也兼容「枪械文件夹直接放在 save/ 下」的平铺写法，这类枪械会归入 OTHER。
  *
  * 用法： node tools/build-data.mjs
  */
@@ -42,11 +42,49 @@ const OUT_JSON = path.join(DATA_DIR, 'guns.json');
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg', '.avif', '.bmp']);
 const TXT_EXT = new Set(['.txt']);
 
-/** 分类在页面上的展示顺序，没列到的分类排在后面（按拼音） */
-const CATEGORY_ORDER = [
-  '突击步枪', '冲锋枪', '步枪', '射手步枪', '狙击步枪', '轻机枪', '霰弹枪', '手枪',
-  '近战武器', '弹药', '配件', '其他', '未分类',
-];
+/**
+ * 分类显示名：目录名可以用中文、英文全称或缩写，页面上一律显示成标准缩写。
+ * 想加分类，在这里加一条映射即可；没登记的目录名会原样显示。
+ */
+const CATEGORY_LABELS = {
+  突击步枪: 'AR',
+  'Assault Rifle': 'AR',
+  AR: 'AR',
+  霰弹枪: 'SG',
+  Shotgun: 'SG',
+  SG: 'SG',
+  冲锋枪: 'SMG',
+  'Submachine Gun': 'SMG',
+  SMG: 'SMG',
+  精确射手步枪: 'DMR',
+  射手步枪: 'DMR',
+  'Designated Marksman Rifle': 'DMR',
+  DMR: 'DMR',
+  狙击步枪: 'SR',
+  'Sniper Rifle': 'SR',
+  SR: 'SR',
+  轻机枪: 'LMG',
+  'Light Machine Gun': 'LMG',
+  LMG: 'LMG',
+  手枪: 'HG',
+  Handgun: 'HG',
+  HG: 'HG',
+  特殊: 'SP',
+  Special: 'SP',
+  SP: 'SP',
+};
+
+/** 分类在页面上的展示顺序（用显示名），没列到的分类排在后面（按名称） */
+const CATEGORY_ORDER = ['AR', 'SG', 'SMG', 'DMR', 'SR', 'LMG', 'HG', 'SP', 'OTHER'];
+
+/** 枪械文件夹直接放在 save/ 下（没有分类目录）时，归到这一类 */
+const UNCATEGORIZED_RAW = '__uncategorized__';
+const UNCATEGORIZED_LABEL = 'OTHER';
+
+/** 取分类的显示名 */
+function categoryLabel(rawName) {
+  return CATEGORY_LABELS[rawName] || rawName;
+}
 
 /** 属性在图表里的展示顺序，txt 里没出现的会自动跳过，没列到的会排在后面 */
 const STAT_ORDER = [
@@ -164,7 +202,7 @@ function pickImage(dir, files) {
   return chosen.name;
 }
 
-function buildGun(categoryName, gunName, dir) {
+function buildGun(categoryName, categoryDirName, gunName, dir) {
   const files = readdirSafe(dir).filter((e) => e.isFile() && !e.name.startsWith('.'));
   const relDir = path.relative(ROOT, dir).split(path.sep);
 
@@ -243,6 +281,7 @@ function buildGun(categoryName, gunName, dir) {
     id: `${categoryName}/${gunName}`,
     name: gunName,
     category: categoryName,
+    categoryDir: categoryDirName,
     dir: relDir.join('/'),
     image: imageFile ? toUrl(...relDir, imageFile) : null,
     imageFile,
@@ -279,7 +318,7 @@ function collectCategories() {
       }
     } else if (looksLikeGunDir(abs)) {
       // 平铺写法：save/M4A1/…
-      push('未分类', [{ name: entry.name, dir: abs }]);
+      push(UNCATEGORIZED_RAW, [{ name: entry.name, dir: abs }]);
     } else {
       warn(`「save/${entry.name}」既不是枪械分类也不是枪械文件夹，已跳过`);
     }
@@ -290,14 +329,25 @@ function collectCategories() {
     return i === -1 ? CATEGORY_ORDER.length : i;
   };
 
+  // 目录名 -> 显示名（中文分类名会变成 AR / SMG 这类缩写）
+  const usedLabels = new Map();
+
   return [...buckets.entries()]
-    .map(([name, gunDirs]) => {
+    .map(([rawName, gunDirs]) => {
+      const isFlat = rawName === UNCATEGORIZED_RAW;
+      const name = isFlat ? UNCATEGORIZED_LABEL : categoryLabel(rawName);
+
+      if (usedLabels.has(name) && usedLabels.get(name) !== rawName) {
+        warn(`目录「${usedLabels.get(name)}」和「${rawName}」都显示为 ${name}，两边的枪械会合并到同一个分类下`);
+      }
+      usedLabels.set(name, rawName);
+
       const guns = gunDirs
-        .map((g) => buildGun(name, g.name, g.dir))
+        .map((g) => buildGun(name, isFlat ? '' : rawName, g.name, g.dir))
         .sort((a, b) => naturalCompare(a.name, b.name));
-      return { name, guns };
+      return { name, dirName: isFlat ? null : rawName, guns };
     })
-    .sort((a, b) => catIndex(a.name) - catIndex(b.name) || naturalCompare(a.name, b.name));
+    .sort((a, b) => catIndex(a.name) - catIndex(b.name) || naturalCompare(a.name, b.name));;
 }
 
 /**
