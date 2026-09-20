@@ -396,8 +396,12 @@ DATA.categories.forEach((c) => {
 check('所有文件系统路径都是 ASCII',
   paths.filter(Boolean).every((p) => ASCII.test(p)),
   paths.filter((p) => p && !ASCII.test(p)).join(' , '));
-check('图片 URL 不含百分号编码',
-  SCHEMES.every((s) => !s.image || !s.image.includes('%')));
+check('图片文件名（imageFile）都是 ASCII 字符，枪名里可以有空格',
+  SCHEMES.every((s) => !s.imageFile || ASCII.test(s.imageFile)),
+  SCHEMES.filter((s) => s.imageFile && !ASCII.test(s.imageFile)).map((s) => s.imageFile).join(' , '));
+check('图片 URL 只由 ASCII + 合法转义组成（空格会被转成 %20，页面能正常加载）',
+  SCHEMES.every((s) => !s.image || !/[^\x00-\x7F]/.test(s.image)),
+  SCHEMES.filter((s) => s.image && /[^\x00-\x7F]/.test(s.image)).map((s) => s.image).join(' , '));
 check('枪械名是 ASCII',
   GUNS.every((g) => ASCII.test(g.name)), GUNS.map((g) => g.name).join(','));
 check('分类显示名为中文全称',
